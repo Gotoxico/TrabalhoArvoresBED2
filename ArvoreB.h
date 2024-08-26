@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#define ARVOREB_H
+#ifndef ARVOREB_H
 
 typedef struct noArvoreB{
     int n;
@@ -18,5 +20,5 @@ NOARVOREB* splitChildArvore(int chave, NOARVOREB* raiz);
 NOARVOREB* buscarPai(int chaveFilho, NOARVOREB* raiz);
 NOARVOREB* remocaoCLRS(int chave, char** raiz);
 
-
+#endif
 #include "ArvoreB.c"

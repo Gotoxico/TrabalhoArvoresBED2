@@ -79,6 +79,7 @@ NOARVOREB* insercaoCLRS(int chave, char** raiz){
     }
 }
 
+
 NOARVOREB* insercaoNaoCheioArvoreB(int chave, char** raiz){
     NOARVOREB* r = raiz; //Descobrir modo para esse NOARVOREB receber o no armazenado no arquivo binario
     int i = r->n;
@@ -183,7 +184,7 @@ NOARVOREB* remocaoCLRS(int chave, char** raiz){
                     if(pai->filhos[i+1].n > t-1){
                         pai->filhos[i].chaves[(pai->filhos[i].n)+1] = pai->filhos[i+1].chaves[(pai->filhos[i].n)];
                         pai->filhos[i].n = pai->filhos[i].n + 1;
-                        pai->filhos[i+11].n = pai->filhos[i+1] - 1;
+                        pai->filhos[i+1].n = pai->filhos[i+1].n - 1;
                     }
                     else{
                         //Adicionar caso em que os irmaos possuem t-1
