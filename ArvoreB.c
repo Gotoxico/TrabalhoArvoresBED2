@@ -182,7 +182,7 @@ NOARVOREB* remocaoCLRS(int chave, char** raiz){
     }
     else{
         if(r->folha){
-            //Se for folha e quando remover a propriedade de elementos t-1 se manter
+            //Se for folha e quando remover, a propriedade de elementos t-1 se manter
             if(r->n-1 >= t-1){
                 int i = 0;
                 while(i < r->n && chaves[i] > chave){
@@ -194,6 +194,7 @@ NOARVOREB* remocaoCLRS(int chave, char** raiz){
                     }
                 }
             }
+            //Se a propriedade nao se manter, pegar o mais a direita do irmao da esquerda ou o mais a esquerda do irmao da direita e unir, ou entao se os dois possuem t-1, agrupar
             else{
                 NOARVOREB* pai = buscarPai(chave, r);
                 int i = buscaBinariaNo(chave, r, 0, r->n-1);
@@ -216,8 +217,10 @@ NOARVOREB* remocaoCLRS(int chave, char** raiz){
         }
 
         else{
+            //Se a chave estiver em um no interno
             if(r->folha == 0 && buscarBinariaNo(chave, r, 0, r->n-1) > 0){
                 int i = presenca;
+                
                 if(r->filhos[i].n >= t){
                     r->chaves[i] = r->filhos[i].chaves[r->filhos[i].n];
                     r->filhos[i].n = (r->filhos[i].n)-1;
