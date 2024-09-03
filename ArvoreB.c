@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <dirent.h>
+#include <string.h>
 #include "ArvoreB.h"
 
 //Funcao basica pra criar um no
@@ -221,14 +223,17 @@ NOARVOREB* remocaoCLRS(int chave, char** raiz){
             if(r->folha == 0 && buscarBinariaNo(chave, r, 0, r->n-1) > 0){
                 int i = presenca;
                 
+                //Se o filho da esquerda for ficar com mais que t-1, roubar uma chave dele
                 if(r->filhos[i].n >= t){
                     r->chaves[i] = r->filhos[i].chaves[r->filhos[i].n];
                     r->filhos[i].n = (r->filhos[i].n)-1;
                 }
+                //Se o filho da direita for ficar com mais que t-1, roubar uma chave dele
                 if(r->filhos[i+1].n >= t){
                     r->chaves[i] = r->filhos[i+1].chaves[0];
                     r->filhos[i+1].n = (r->filhos[i+1].n)-1;
                 }
+                //Criar um no com merge como filho de r
                 else{
                     int folha = r->filhos[i].folha;
                     NOARVOREB* merge = criarNoArvoreB(t, folha);
@@ -256,5 +261,79 @@ NOARVOREB* remocaoCLRS(int chave, char** raiz){
 
     }
 
+}
+
+char* geradorNomeArquivo(){
+    char letras[26];
+    for(int i = 0; i < 26; i++){
+        letras[i] = 'a' + i;
+    }
+
+    char caminho[24] = ".dat";
+    for(int i = 0; i < 20; i++){
+        memmove(caminho + 1, caminho, strlen(caminho) + 1);
+        int letra = rand() % 26;
+        caminho[0] = letras[letra];
+    }
+
+    return caminho;
+}
+
+char** criarArquivoBinario(char nome){
+    FILE* f = fopen(nome, "wb");
+    if(f == NULL){
+        printf("Erro de criacao\n");
+        return;
+    }
+
+    return nome;
+}
+
+void criarArquivoDiretorio(){
+    DIR *f = opendir("../Arvore");
+    struct dirent* entrada;
+    int arquivos = 0;
+    if(f == NULL){
+        printf("Erro ao abrir diretorio\n");
+        return;
+    }
+
+    else{
+        char nome[24] = strcpy(geradorNomeArquivo(), nome);
+        while(entrada=readdir(f)){
+            arquivos++;
+            if(strcmp(entrada->d_name, nome) == 0){
+                closedir(f);
+                criarArquivoDiretorio();
+            }
+        }
+        criarArquivoBinario(nome);
+    }
+}
+
+void coletarArquivoBinario(char nome){
+    DIR *f = opendir("./Arvore");
+    struct dirent* entrada;
+    int arquivos = 0;
+    
+    if(f == NULL){
+        printf("Erro de leitura\n");
+        return;
+    }
+
+    else{
+        while(entrada=readdir(f)){
+            arquivos++;
+            if(strcmp(entrada->d_name, nome) == 0){
+                FILE *bf = fopen(nome, "rb");
+                
+            }
+        }
+    }
 
 }
+
+
+
+
+//Implementar funcao pra pesquisar arvores na pasta
