@@ -185,12 +185,12 @@ NOARVOREB* remocaoCLRS(int chave, char** raiz){
             //Se for folha e quando remover, a propriedade de elementos t-1 se manter
             if(r->n-1 >= t-1){
                 int i = 0;
-                while(i < r->n && chaves[i] > chave){
+                while(i < r->n && r->chaves[i] > chave){
                     i++;
                 }
-                if(chaves[i] == chave){
+                if(r->chaves[i] == chave){
                     for(int j = i; j<r->n; j++){
-                        chaves[j] = chaves[j+1];
+                        r->chaves[j] = r->chaves[j+1];
                     }
                 }
             }
