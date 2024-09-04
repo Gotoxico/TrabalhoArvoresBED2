@@ -17,6 +17,8 @@ NOARVOREB* insercaoNaoCheioArvoreB(int chave, char** raiz);
 NOARVOREB* splitChildArvore(int chave, NOARVOREB* raiz);
 NOARVOREB* buscarPai(int chaveFilho, NOARVOREB* raiz);
 NOARVOREB* remocaoCLRS(int chave, char** raiz);
+char geradorNomeArquivo();
+void criarArquivoDiretorio();
 
 #include "ArvoreB.c"
 #endif
