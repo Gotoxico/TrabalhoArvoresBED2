@@ -3,7 +3,7 @@
 #include <dirent.h>
 #include <string.h>
 #include "ArvoreB.h"
-
+int t = 3;
 //Funcao basica pra criar um no
 NOARVOREB* criarNoArvoreB(int t, int folha){
     NOARVOREB* no = (NOARVOREB*) malloc(sizeof(NOARVOREB));
@@ -15,7 +15,7 @@ NOARVOREB* criarNoArvoreB(int t, int folha){
 }
 
 //Buscar presenca de um no na arvore e retornar a posicao em relacao ao vetor de chaves do no
-int buscarArvoreB(int chave, char** raiz){
+int buscarArvoreB(int chave,  raiz){
     NOARVOREB* r = raiz; //Descobrir modo para esse NOARVOREB receber o no armazenado no arquivo binario
     int i = 0;
     while(i <= r->n && chave > r->chaves[i]){
@@ -51,81 +51,26 @@ int buscaBinariaNo(int chave, NOARVOREB* raiz, int limiteInferior, int limiteSup
 }
 
 //Funcao para buscar binariamente uma chave numa arvore
-int buscarArvoreBBinariamente(int chave, char** raiz){
-    NOARVOREB* r = raiz; //Descobrir modo para esse NOARVOREB receber o no armazenado no arquivo binario
-    int i = buscaBinariaNo(chave, r, 0, r->n-1);
-    if(i > 0){
+int buscarArvoreBBinariamente(int chave, NOARVOREB* raiz) {
+    int i = buscaBinariaNo(chave, raiz, 0, raiz->n - 1);
+    //Descobrir modo para esse NOARVOREB receber o no armazenado no arquivo binario
+    if (i >= 0) {
         return i;
     }
-    if(i == 0){
-        NOARVOREB* rf = r->filhos[i];
-    }
-    else{
-        NOARVOREB* rf = r->filhos[-i+1];
+
+    if (raiz->folha) {
+        return -1;  // Não encontrado
     }
 
-    if(r->folha){
-        return NULL;
-    }
-    else{
-        return buscarArvoreBBinariamente(chave, rf); //Transformar em char**
-    }
-}
-
-//Funcao para inserir por metodo CLRS que utiliza as funcoes splitChildArvoreB e insercaoNaoCheioArvoreB
-NOARVOREB* insercaoCLRS(int chave, char** raiz){
-    NOARVOREB* r = raiz; //Descobrir modo para esse NOARVOREB receber o no armazenado no arquivo binario
-    if(r->n == 2*t-1){ //Encontrar modo de armazenar t
-        NOARVOREB* s = criarNoArvore(t, 0);
-        s->filhos[1] = r;
-        splitChildArvoreB(s, 1);
-        insercaoNaoCheioArvoreB(chave, s);
-    }
-    else{
-        insercaoNaoCheioArvoreB(chave, r);
-    }
-}
-
-//Funcao para inserir em um no nao cheio
-NOARVOREB* insercaoNaoCheioArvoreB(int chave, char** raiz){
-    NOARVOREB* r = raiz; //Descobrir modo para esse NOARVOREB receber o no armazenado no arquivo binario
-    int i = r->n;
-    //Se for folha
-    if(r->folha){
-        while(i >= 1 && chave < r->chaves[i]){
-            r->chaves[i+1] = r->chaves[i];
-            i = i-1;
-        }
-        r->chaves[i+1] = chave;
-        r->n = r->n+1;
-    }
-    //Se for no interno, encontrar um filho
-    else{
-        while(i >= 1 && chave < r->chaves[i]){
-            i = i-1;
-        }
-        i = i+1;
-        NOARVOREB* rf = r->filhos[i];
-        //Se o filho estiver cheio, fazer splitChild
-        if(rf->n == 2*t-1){
-            splitChildArvoreB(i, r);
-            if(chave > r->chaves[i]){
-                i = i+1;
-            }
-        }
-        //Se o filho nao estiver cheio
-        insercaoNaoCheioArvoreB(chave, r->filhos[i]);
-    }
+    char* proximoFilho = raiz->filhos[-i - 1];
+    return buscarArvoreBBinariamente(chave, proximoFilho);
 }
 
 //Funcao para dividir chaves e filhos entre filhos y e z de raiz
 NOARVOREB* splitChildArvore(int chave, NOARVOREB* raiz){
-    NOARVOREB* z = (NOARVOREB*) malloc(sizeof(NOARVOREB));
-    z->chaves = (int*) malloc(sizeof((2*t-1) * sizeof(int)));
-    z->filhos = (char**) malloc(sizeof(2*t) * sizeof(char*));
-    NOARVOREB* y = raiz->filhos[chave];
-    z->folha = y->folha;
-    z->n = t-1;
+   NOARVOREB* y = raiz->filhos[chave];
+    NOARVOREB* z = criarNoArvoreB(t, y->folha);
+    z->n = t - 1;
 
     //Copia chaves de y para z
     for(int j = 1; j < t; j++){
@@ -159,7 +104,50 @@ NOARVOREB* splitChildArvore(int chave, NOARVOREB* raiz){
     //Escrever no raiz em arquivo binario
 }
 
-//Funcao para buscar o pai de um no 
+//Funcao para inserir por metodo CLRS que utiliza as funcoes splitChildArvoreB e insercaoNaoCheioArvoreB
+// Função para inserção usando o método CLRS
+void insercaoCLRS(int chave, NOARVOREB** raiz) {
+    NOARVOREB* r = *raiz;
+    if (r->n == 2 * t - 2) {
+        NOARVOREB* s = criarNoArvoreB(t, 0);
+        s->filhos[0] = r;
+        insercaoNaoCheioArvoreB(chave, r);
+        splitChildArvoreB(s, 0);
+        *raiz = s;
+    } else {
+        insercaoNaoCheioArvoreB(chave, r);
+    }
+}
+
+
+//Funcao para inserir em um no nao cheio
+void insercaoNaoCheioArvoreB(int chave, NOARVOREB* raiz) {
+    int i = raiz->n - 1;
+
+    if (raiz->folha) {
+        while (i >= 0 && chave < raiz->chaves[i]) {
+            raiz->chaves[i + 1] = raiz->chaves[i];
+            i--;
+        }
+        raiz->chaves[i + 1] = chave;
+        raiz->n++;
+    } 
+    //Se for no interno, encontrar um filho
+    else {
+        while (i >= 0 && chave < raiz->chaves[i]) {
+            i--;
+        }
+        i++;
+        NOARVOREB* filho = raiz->filhos[i];
+        insercaoNaoCheioArvoreB(chave, raiz->filhos[i]);
+        if (filho->n == 2 * t - 1) {
+            splitChildArvoreB(raiz, i);
+        }
+    }
+}
+
+
+/*//Funcao para buscar o pai de um no 
 NOARVOREB* buscarPai(int chaveFilho, NOARVOREB* raiz){
     NOARVOREB* pai = raiz;
     while(pai->folha != 0){
@@ -172,10 +160,10 @@ NOARVOREB* buscarPai(int chaveFilho, NOARVOREB* raiz){
             buscarPai(chaveFilho, rf);
         }
     }
-}
+}*/
 
 //Funcao para remover CLRS
-NOARVOREB* remocaoCLRS(int chave, char** raiz){
+/*NOARVOREB* remocaoCLRS(int chave, char** raiz){
     NOARVOREB* r = raiz; //Descobrir modo para esse NOARVOREB receber o no armazenado no arquivo binario
     int presenca = buscarArvoreB(chave, raiz);
     //Se a chave nao estiver presente na arvore, retornar null
@@ -261,7 +249,7 @@ NOARVOREB* remocaoCLRS(int chave, char** raiz){
 
     }
 
-}
+}*/
 
 char* geradorNomeArquivo(){
     char letras[26];
@@ -269,14 +257,14 @@ char* geradorNomeArquivo(){
         letras[i] = 'a' + i;
     }
 
-    char caminho[24] = ".dat";
+    char *caminho[24] = ".dat";
     for(int i = 0; i < 20; i++){
-        memmove(caminho + 1, caminho, strlen(caminho) + 1);
+        memmove(*caminho + 1, *caminho, strlen(*caminho) + 1);
         int letra = rand() % 26;
-        caminho[0] = letras[letra];
+        *caminho[0] = letras[letra];
     }
 
-    return caminho;
+    return *caminho;
 }
 
 char** criarArquivoBinario(char nome){
@@ -334,6 +322,23 @@ void coletarArquivoBinario(char nome){
 }
 
 
-
+// Função de impressão da Árvore B
+void imprimirArvoreB(NOARVOREB* no, int nivel) {
+    if (no != NULL) {
+        int i;
+        for (i = 0; i < no->n; i++) {
+            if (!no->folha) {
+                imprimirArvoreB(no->filhos[i], nivel + 1);
+            }
+            for (int j = 0; j < nivel; j++) {
+                printf("    ");  // Indentação para mostrar a profundidade
+            }
+            printf("%d\n", no->chaves[i]);
+        }
+        if (!no->folha) {
+            imprimirArvoreB(no->filhos[i], nivel + 1);
+        }
+    }
+}
 
 //Implementar funcao pra pesquisar arvores na pasta

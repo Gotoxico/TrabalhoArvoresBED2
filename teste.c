@@ -3,7 +3,7 @@
 
 typedef struct NOARVOREB {
     int *chaves;
-    struct NOARVOREB **filhos;
+    char **filhos;
     int n;
     int folha;
 } NOARVOREB;
@@ -14,8 +14,8 @@ int t;  // Grau mínimo da árvore B
 NOARVOREB* criarNoArvoreB(int t, int folha) {
     NOARVOREB* no = (NOARVOREB*) malloc(sizeof(NOARVOREB));
     no->n = 0;
-    no->chaves = (int*) malloc((2 * t - 1) * sizeof(int));
-    no->filhos = (NOARVOREB**) malloc(2 * t * sizeof(NOARVOREB*));
+    no->chaves = (int*) malloc(sizeof((2*t-1) * sizeof(int)));
+    no->filhos = (char**) malloc(sizeof(2*t) * sizeof(char*));
     no->folha = folha;
     return no;
 }
@@ -68,7 +68,7 @@ int buscarArvoreBBinariamente(int chave, NOARVOREB* raiz) {
         return -1;  // Não encontrado
     }
 
-    NOARVOREB* proximoFilho = raiz->filhos[-i - 1];
+    char* proximoFilho = raiz->filhos[-i - 1];
     return buscarArvoreBBinariamente(chave, proximoFilho);
 }
 
@@ -183,18 +183,7 @@ void insercaoCLRS(int chave, NOARVOREB** raiz) {
     }
 }
 
-/*void Imprimir(NOARVOREB * raiz, int nivel){
-    int i;
-    if(raiz){
-        Imprimir(raiz->dir, nivel + 1);
-        printf("\n\n");
 
-        for(i = 0; i < nivel; i++) printf("\t");
-
-        printf("%3d", raiz->valor);
-        Imprimir(raiz->esq, nivel + 1);
-    }
-}*/
 
 // Função main para testar a árvore B, criar menu
 int main() {
