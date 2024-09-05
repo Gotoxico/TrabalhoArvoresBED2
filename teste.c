@@ -172,14 +172,13 @@ void insercaoNaoCheioArvoreB(int chave, NOARVOREB* raiz) {
 // Função para inserção usando o método CLRS
 void insercaoCLRS(int chave, NOARVOREB** raiz) {
     NOARVOREB* r = *raiz;
-    if (r->n == 2 * t - 2) {
+
+    insercaoNaoCheioArvoreB(chave, r);
+    if (r->n == 2 * t - 1) {
         NOARVOREB* s = criarNoArvoreB(t, 0);
         s->filhos[0] = r;
-        insercaoNaoCheioArvoreB(chave, r);
         splitChildArvoreB(s, 0);
         *raiz = s;
-    } else {
-        insercaoNaoCheioArvoreB(chave, r);
     }
 }
 
@@ -206,7 +205,7 @@ int main() {
                 printf("Digite a chave a ser inserida: ");
                 scanf("%d", &chave);
                 insercaoCLRS(chave, &raiz);
-                imprimirArvoreB(raiz, 0);
+                //imprimirArvoreB(raiz, 0);
                 break;
             case 2:
                 printf("Digite a chave a ser buscada: ");
