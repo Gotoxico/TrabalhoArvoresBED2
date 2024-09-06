@@ -15,7 +15,7 @@ NOARVOREB* criarNoArvoreB(int t, int folha){
 }
 
 //Buscar presenca de um no na arvore e retornar a posicao em relacao ao vetor de chaves do no
-int buscarArvoreB(int chave,  raiz){
+int buscarArvoreB(int chave,  char  * raiz){
     NOARVOREB* r = raiz; //Descobrir modo para esse NOARVOREB receber o no armazenado no arquivo binario
     int i = 0;
     while(i <= r->n && chave > r->chaves[i]){
@@ -163,7 +163,7 @@ NOARVOREB* buscarPai(int chaveFilho, NOARVOREB* raiz){
 }*/
 
 //Funcao para remover CLRS
-/*NOARVOREB* remocaoCLRS(int chave, char** raiz){
+NOARVOREB* remocaoCLRS(int chave, char** raiz){
     NOARVOREB* r = raiz; //Descobrir modo para esse NOARVOREB receber o no armazenado no arquivo binario
     int presenca = buscarArvoreB(chave, raiz);
     //Se a chave nao estiver presente na arvore, retornar null
@@ -249,22 +249,26 @@ NOARVOREB* buscarPai(int chaveFilho, NOARVOREB* raiz){
 
     }
 
-}*/
+}
 
 char* geradorNomeArquivo(){
     char letras[26];
     for(int i = 0; i < 26; i++){
         letras[i] = 'a' + i;
     }
-
-    char *caminho[24] = ".dat";
+    // Aloca memória para o nome do arquivo (20 letras + ".dat" + '\0')
+    char *caminho = malloc(25 * sizeof(char)); 
+    
+    // Gera as 20 letras aleatórias
     for(int i = 0; i < 20; i++){
-        memmove(*caminho + 1, *caminho, strlen(*caminho) + 1);
         int letra = rand() % 26;
-        *caminho[0] = letras[letra];
+        caminho[i] = letras[letra];
     }
 
-    return *caminho;
+    // Adiciona a extensão ".dat"
+    strcpy(caminho + 20, ".dat");
+
+    return caminho;
 }
 
 char** criarArquivoBinario(char nome){

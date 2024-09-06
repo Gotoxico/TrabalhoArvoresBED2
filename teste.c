@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
 
 typedef struct NOARVOREB {
     int *chaves;
@@ -182,50 +185,74 @@ void insercaoCLRS(int chave, NOARVOREB** raiz) {
     }
 }
 
+//função para gerar um nome de arquivo aleatorio com 20 caracteres e adicionar a extensao .dat
+char* geradorNomeArquivo(){
+    char letras[26];
+    for(int i = 0; i < 26; i++){
+        letras[i] = 'a' + i;
+    }
+
+    // Aloca memória para o nome do arquivo (20 letras + ".dat" + '\0')
+    char *caminho = malloc(25 * sizeof(char)); 
+    
+
+    // Gera as 20 letras aleatórias
+    for(int i = 0; i < 20; i++){
+        int letra = rand() % 26;
+        caminho[i] = letras[letra];
+    }
+
+    // Adiciona a extensão ".dat"
+    strcpy(caminho + 20, ".dat");
+
+    return caminho;
+}
 
 
 // Função main para testar a árvore B, criar menu
 int main() {
+    srand(time(NULL));
     t = 3;  // Grau mínimo da árvore B
+    char * c = geradorNomeArquivo();
+    printf("%s\n", c);
+    // NOARVOREB* raiz = criarNoArvoreB(t, 1);  // Cria a raiz da árvore B
+    // int opcao, chave;
 
-    NOARVOREB* raiz = criarNoArvoreB(t, 1);  // Cria a raiz da árvore B
-    int opcao, chave;
+    // do {
+    //     printf("\n\nMenu de opções:\n");
+    //     printf("1 - Inserir chave\n");
+    //     printf("2 - Buscar chave\n");
+    //     printf("3 - Imprimir árvore\n");
+    //     printf("4 - Sair\n");
+    //     printf("Digite a opção desejada: ");
+    //     scanf("%d", &opcao);
 
-    do {
-        printf("\n\nMenu de opções:\n");
-        printf("1 - Inserir chave\n");
-        printf("2 - Buscar chave\n");
-        printf("3 - Imprimir árvore\n");
-        printf("4 - Sair\n");
-        printf("Digite a opção desejada: ");
-        scanf("%d", &opcao);
+    //     switch (opcao) {
+    //         case 1:
+    //             printf("Digite a chave a ser inserida: ");
+    //             scanf("%d", &chave);
+    //             insercaoCLRS(chave, &raiz);
+    //             //imprimirArvoreB(raiz, 0);
+    //             break;
+    //         case 2:
+    //             printf("Digite a chave a ser buscada: ");
+    //             scanf("%d", &chave);
+    //             if (buscarArvoreBBinariamente(chave, raiz) >= 0) {
+    //                 printf("Chave encontrada!\n");
+    //             } else {
+    //                 printf("Chave não encontrada!\n");
+    //             }
+    //             break;
+    //         case 3:
+    //             imprimirArvoreB(raiz, 0);
+    //             break;
+    //         case 4:
+    //             break;
+    //         default:
+    //             printf("Opção inválida!\n");
+    //     }
+    // } while (opcao != 4);
 
-        switch (opcao) {
-            case 1:
-                printf("Digite a chave a ser inserida: ");
-                scanf("%d", &chave);
-                insercaoCLRS(chave, &raiz);
-                //imprimirArvoreB(raiz, 0);
-                break;
-            case 2:
-                printf("Digite a chave a ser buscada: ");
-                scanf("%d", &chave);
-                if (buscarArvoreBBinariamente(chave, raiz) >= 0) {
-                    printf("Chave encontrada!\n");
-                } else {
-                    printf("Chave não encontrada!\n");
-                }
-                break;
-            case 3:
-                imprimirArvoreB(raiz, 0);
-                break;
-            case 4:
-                break;
-            default:
-                printf("Opção inválida!\n");
-        }
-    } while (opcao != 4);
-
-    return 0;
+    // return 0;
 }
 
