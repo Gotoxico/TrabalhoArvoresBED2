@@ -10,7 +10,11 @@ NOARVOREB* criarNoArvoreB(int t, int folha){
     no->n = 0;
     no->chaves = (int*) malloc(sizeof((2*t-1) * sizeof(int)));
     no->filhos = (char**) malloc(sizeof(2*t) * sizeof(char*));
+    for(int i = 0; i < 2 * t; i++){
+        no->filhos[i] = (char*) malloc(24 * sizeof(char));
+    }
     no->folha = folha;
+    no->t = t;
     return no;
 }
 
@@ -251,6 +255,7 @@ NOARVOREB* remocaoCLRS(int chave, char** raiz){
 
 }
 
+//Funcao para gerar nome aleatoriamente
 char* geradorNomeArquivo(){
     char letras[26];
     for(int i = 0; i < 26; i++){
@@ -271,6 +276,7 @@ char* geradorNomeArquivo(){
     return caminho;
 }
 
+//Funcao para criar arquivo binario
 char** criarArquivoBinario(char nome){
     FILE* f = fopen(nome, "wb");
     if(f == NULL){
@@ -278,10 +284,12 @@ char** criarArquivoBinario(char nome){
         return;
     }
 
+    fclose(f);
     return nome;
 }
 
-void criarArquivoDiretorio(){
+//Funcao para criar o arquivo no diretorio
+void criarArquivoDiretorio(NOARVOREB* no){
     DIR *f = opendir("../Arvore");
     struct dirent* entrada;
     int arquivos = 0;
@@ -296,14 +304,27 @@ void criarArquivoDiretorio(){
             arquivos++;
             if(strcmp(entrada->d_name, nome) == 0){
                 closedir(f);
-                criarArquivoDiretorio();
+                criarArquivoDiretorio(&no);
+                return;
             }
         }
         criarArquivoBinario(nome);
+        FILE* bf = fopen(nome, "wb");
+
+        fwrite(&no->n, sizeof(int), 1, bf);
+        fwrite(&no->chaves, sizeof(int), (2 * no->t - 1), bf);
+        for(int i = 0; i < (2 * no->t); i++){
+            fwrite(no->filhos[i], sizeof(char), 24, bf);
+        }
+        fwrite(&no->folha, sizeof(int), 1, bf);
+        fwrite(&no->t, sizeof(int), 1, bf);
+
+        fclose(bf);
     }
 }
 
-void coletarArquivoBinario(char nome){
+//Funcao para ler um arquivo binario e criar no baseado em suas informacoes, no entanto de tras pra frente do arquivo binario
+NOARVOREB* coletarArquivoBinario(char *nome){
     DIR *f = opendir("./Arvore");
     struct dirent* entrada;
     int arquivos = 0;
@@ -317,12 +338,38 @@ void coletarArquivoBinario(char nome){
         while(entrada=readdir(f)){
             arquivos++;
             if(strcmp(entrada->d_name, nome) == 0){
+                int t, folha;
                 FILE *bf = fopen(nome, "rb");
+                if(bf == NULL){
+                    printf("Erro ao abrir arquivo\n");
+                    return;
+                }
+
+                fseek(bf, -sizeof(int), SEEK_END);
+                fread(&t, sizeof(int), 1, bf);
+                fseek(bf, -sizeof(int), SEEK_CUR);
+                fread(&folha, sizeof(int), 1, bf);
+                NOARVOREB* raiz = criarNoArvoreB(t, folha);
+
+                for(int i = 0; i < 2 * t; i++){
+                    fseek(bf, -(24 * sizeof(char*)), SEEK_CUR);
+                    fread(&raiz->filhos[i], sizeof(char*), 24, bf);
+                }
                 
+                fseek(bf, - (2*t - 1) * sizeof(int), SEEK_CUR);
+                fread(&raiz->chaves, sizeof(int), (2 * t - 1), bf);
+                
+                
+                fseek(bf, -sizeof(int), SEEK_CUR);
+                fread(&raiz->n, sizeof(int), 1, bf);
+
+                return raiz;
+
+                fclose(bf);
             }
         }
+        closedir(f);
     }
-
 }
 
 
@@ -346,3 +393,24 @@ void imprimirArvoreB(NOARVOREB* no, int nivel) {
 }
 
 //Implementar funcao pra pesquisar arvores na pasta
+void listarArvoresDiretorio(){
+    DIR *f = opendir("./Arvore");
+    struct dirent* entrada;
+    int arquivos = 0, i = 1;
+
+    if(f == NULL){
+        printf("Erro de leitura\n");
+        return;
+    }
+
+    else{
+        while(entrada=readdir(f)){
+            arquivos++;
+            NOARVOREB* raiz = coletarArquivoBinario(entrada->d_name);
+            if(raiz->folha == 0){
+                printf("Arquivo %d: %s\n", i, entrada->d_name);
+                i++;
+            }
+        }
+    }
+}

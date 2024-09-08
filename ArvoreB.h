@@ -6,6 +6,7 @@ typedef struct noArvoreB{
     int *chaves;
     char **filhos;
     int folha;
+    int t;
 }NOARVOREB;
 
 NOARVOREB* criarNoArvoreB(int t, int folha);
