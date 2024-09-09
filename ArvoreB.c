@@ -63,7 +63,7 @@ int buscarArvoreBBinariamente(int chave, NOARVOREB* raiz) {
     }
 
     if (raiz->folha) {
-        return -1;  // Não encontrado
+        return -1;  // Nï¿½o encontrado
     }
 
     char* proximoFilho = raiz->filhos[-i - 1];
@@ -109,7 +109,7 @@ NOARVOREB* splitChildArvore(int chave, NOARVOREB* raiz){
 }
 
 //Funcao para inserir por metodo CLRS que utiliza as funcoes splitChildArvoreB e insercaoNaoCheioArvoreB
-// Função para inserção usando o método CLRS
+// Funï¿½ï¿½o para inserï¿½ï¿½o usando o mï¿½todo CLRS
 void insercaoCLRS(int chave, NOARVOREB** raiz) {
     NOARVOREB* r = *raiz;
     if (r->n == 2 * t - 2) {
@@ -373,7 +373,7 @@ NOARVOREB* coletarArquivoBinario(char *nome){
 }
 
 
-// Função de impressão da Árvore B
+// Funï¿½ï¿½o de impressï¿½o da ï¿½rvore B
 void imprimirArvoreB(NOARVOREB* no, int nivel) {
     if (no != NULL) {
         int i;
@@ -382,7 +382,7 @@ void imprimirArvoreB(NOARVOREB* no, int nivel) {
                 imprimirArvoreB(no->filhos[i], nivel + 1);
             }
             for (int j = 0; j < nivel; j++) {
-                printf("    ");  // Indentação para mostrar a profundidade
+                printf("    ");  // Indentaï¿½ï¿½o para mostrar a profundidade
             }
             printf("%d\n", no->chaves[i]);
         }
@@ -412,5 +412,19 @@ void listarArvoresDiretorio(){
                 i++;
             }
         }
+    }
+}
+
+void criarDiretorio(){
+    const char* nomeDiretorio;
+    printf("Digite nome: \n");
+    scanf("%s", &nomeDiretorio);
+    if(_mkdir(nomeDiretorio == 0)){
+        printf("Diretorio criado\n");
+        return;
+    }
+    else{
+        perror("Criacao mal sucedida\n");
+        return criarDiretorio();
     }
 }
