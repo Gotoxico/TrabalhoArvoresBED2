@@ -15,7 +15,7 @@ NOARVOREB* criarNoArvoreB(int t, int folha){
 }
 
 //Buscar presenca de um no na arvore e retornar a posicao em relacao ao vetor de chaves do no
-int buscarArvoreB(int chave,  raiz){
+int buscarArvoreB(int chave, NOARVOREB * raiz){
     NOARVOREB* r = raiz; //Descobrir modo para esse NOARVOREB receber o no armazenado no arquivo binario
     int i = 0;
     while(i <= r->n && chave > r->chaves[i]){
@@ -252,17 +252,18 @@ NOARVOREB* buscarPai(int chaveFilho, NOARVOREB* raiz){
 }*/
 
 char* geradorNomeArquivo(){
-    char letras[26];
-    for(int i = 0; i < 26; i++){
-        letras[i] = 'a' + i;
+   char nome[26];
+   for(int i = 0; i < 26;i++){
+        nome[i] = 'A' + i;
+   }
+
+    char *caminho = malloc(25 * sizeof(char)); 
+    ".dat";
+    for(int i = 0; i < 20; i++){
+        caminho[i] = nome[rand() % 26];
     }
 
-    char *caminho[24] = ".dat";
-    for(int i = 0; i < 20; i++){
-        memmove(*caminho + 1, *caminho, strlen(*caminho) + 1);
-        int letra = rand() % 26;
-        *caminho[0] = letras[letra];
-    }
+    strcat(caminho, ".dat");
 
     return *caminho;
 }

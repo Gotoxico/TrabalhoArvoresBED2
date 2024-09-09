@@ -1,14 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <dirent.h>
 
 typedef struct NOARVOREB {
-    int *chaves;
-    char **filhos;
     int n;
     int folha;
+    int *chaves;
+    char **filhos;
 } NOARVOREB;
 
-int t;  // Grau mínimo da árvore B
+int t;  //Grau mínimo da árvore B
 
 // Função básica para criar um nó de Árvore B
 NOARVOREB* criarNoArvoreB(int t, int folha) {
@@ -74,13 +77,19 @@ int buscarArvoreBBinariamente(int chave, NOARVOREB* raiz) {
 
 // Função para fazer o split de um nó filho
 void splitChildArvoreB(NOARVOREB* raiz, int i) {
-    NOARVOREB* y = raiz->filhos[i];
+    
+
+    NOARVOREB* y = criarNoArvoreB(t, 0);
+    y = coletarArquivoBinario(raiz->filhos[i]);  
+    
     NOARVOREB* z = criarNoArvoreB(t, y->folha);
     z->n = t - 1;
 
     for (int j = 0; j < t - 1; j++) {
         z->chaves[j] = y->chaves[j + t];
     }
+    z->filhos = (char**) malloc(sizeof(2*t) * sizeof(char*));
+    criarArquivoDiretorio(z);
 
     if (!y->folha) {
         for (int j = 0; j < t; j++) {
@@ -105,46 +114,46 @@ void splitChildArvoreB(NOARVOREB* raiz, int i) {
 }
 
 
-//Funcao para dividir chaves e filhos entre filhos y e z de raiz
-NOARVOREB* splitChildArvore(int chave, NOARVOREB* raiz){
-    NOARVOREB* z = (NOARVOREB*) malloc(sizeof(NOARVOREB));
-    z->chaves = (int*) malloc(sizeof((2*t-1) * sizeof(int)));
-    z->filhos = (char**) malloc(sizeof(2*t) * sizeof(char*));
-    NOARVOREB* y = raiz->filhos[chave];
-    z->folha = y->folha;
-    z->n = t-1;
+// //Funcao para dividir chaves e filhos entre filhos y e z de raiz
+// NOARVOREB* splitChildArvore(int chave, NOARVOREB* raiz){
+//     NOARVOREB* z = (NOARVOREB*) malloc(sizeof(NOARVOREB));
+//     z->chaves = (int*) malloc(sizeof((2*t-1) * sizeof(int)));
+//     z->filhos = (char**) malloc(sizeof(2*t) * sizeof(char*));
+//     NOARVOREB* y = raiz->filhos[chave];
+//     z->folha = y->folha;
+//     z->n = t-1;
 
-    //Copia chaves de y para z
-    for(int j = 1; j < t; j++){
-        z->chaves[j] = y->chaves[j+t];
-    }
+//     //Copia chaves de y para z
+//     for(int j = 1; j < t; j++){
+//         z->chaves[j] = y->chaves[j+t];
+//     }
 
-    //Se y for no interno, copia filhos de y para z
-    if(y->folha == 0){
-        for(int j = 1; j < t+1; j++){
-            z->filhos[j] = y->filhos[j+t];
-        }
-    }
-    //Modifica quantidade de chaves em y
-    y->n = t-1;
+//     //Se y for no interno, copia filhos de y para z
+//     if(y->folha == 0){
+//         for(int j = 1; j < t+1; j++){
+//             z->filhos[j] = y->filhos[j+t];
+//         }
+//     }
+//     //Modifica quantidade de chaves em y
+//     y->n = t-1;
 
-    //Move os apontadores para a direita ate a chave
-    for(int j = raiz->n+1; j > chave; j--){
-        raiz->filhos[j+1] = raiz->filhos[j];
-    }
-    //Aponta z como um dos filhos de raiz
-    raiz->filhos[chave+1] = z;
+//     //Move os apontadores para a direita ate a chave
+//     for(int j = raiz->n+1; j > chave; j--){
+//         raiz->filhos[j+1] = raiz->filhos[j];
+//     }
+//     //Aponta z como um dos filhos de raiz
+//     raiz->filhos[chave+1] = z;
 
-    //Move as chaves para a direita ate a chave - 1
-    for(int j = raiz->n; j > chave-1; j--){
-        raiz->chaves[j+1] = raiz->chaves[j];
-    }
-    raiz->chaves[chave] = y->chaves[t];
-    raiz->n = raiz->n+1;
-    //Escrever no y em arquivo binario
-    //Escrever no z em arquivo binario
-    //Escrever no raiz em arquivo binario
-}
+//     //Move as chaves para a direita ate a chave - 1
+//     for(int j = raiz->n; j > chave-1; j--){
+//         raiz->chaves[j+1] = raiz->chaves[j];
+//     }
+//     raiz->chaves[chave] = y->chaves[t];
+//     raiz->n = raiz->n+1;
+//     //Escrever no y em arquivo binario
+//     //Escrever no z em arquivo binario
+//     //Escrever no raiz em arquivo binario
+// }
 // Função para inserir em um nó não cheio
 void insercaoNaoCheioArvoreB(int chave, NOARVOREB* raiz) {
     int i = raiz->n - 1;
@@ -161,6 +170,7 @@ void insercaoNaoCheioArvoreB(int chave, NOARVOREB* raiz) {
             i--;
         }
         i++;
+        
         NOARVOREB* filho = raiz->filhos[i];
         insercaoNaoCheioArvoreB(chave, raiz->filhos[i]);
         if (filho->n == 2 * t - 1) {
@@ -182,49 +192,164 @@ void insercaoCLRS(int chave, NOARVOREB** raiz) {
     }
 }
 
+char* geradorNomeArquivo(){
+    srand(time(NULL));
+   char nome[26];
+   for(int i = 0; i < 26;i++){
+        nome[i] = 'A' + i;
+   }
+
+    char *caminho = malloc(25 * sizeof(char)); 
+    ".dat";
+    for(int i = 0; i < 20; i++){
+        caminho[i] = nome[rand() % 26];
+    }
+    caminho[20] = '\0';
+    strcat(caminho, ".dat");
+
+    return caminho;
+}
+
+void criarArquivoBinario(NOARVOREB *no, char *nome) {
+    FILE *f = fopen(nome, "wb");
+    if (f == NULL) {
+        printf("Erro de criação do arquivo\n");
+        return;
+    }
+
+    // Escreve o número de chaves e a folha
+    fwrite(&no->n, sizeof(int), 1, f);
+    fwrite(&no->folha, sizeof(int), 1, f);
+
+    // Grava as chaves
+    fwrite(no->chaves, sizeof(int), no->n, f);
+
+    // Aqui você pode adicionar código para gravar os filhos, caso seja necessário.
+
+    fclose(f);
+}
+
+
+void criarArquivoDiretorio(NOARVOREB * no){
+    NOARVOREB *raiz = no;
+    DIR *f = opendir("../Arvore");
+    struct dirent* entrada;
+    int arquivos = 0;
+    if(f == NULL){
+        printf("Erro ao abrir diretorio\n");
+        return;
+    }
+
+    else{
+        char*nome = geradorNomeArquivo();
+        char caminhoCompleto[250];
+        snprintf(caminhoCompleto, sizeof(caminhoCompleto), "../Arvore/%s", nome);
+
+        //nome = strcpy(nome, geradorNomeArquivo());
+        while ((entrada = readdir(f)) != NULL) {
+            arquivos++;
+            if(strcmp(entrada->d_name, nome) == 0){
+                closedir(f);
+                criarArquivoDiretorio(no);
+                return;
+            }
+        }
+        criarArquivoBinario(raiz, caminhoCompleto);
+        printf("Aqui");
+        free(nome);
+        closedir(f);
+    }
+}
+
+NOARVOREB * coletarArquivoBinario(char *nome){
+    DIR *f = opendir("../Arvore");
+    NOARVOREB *no = (NOARVOREB*) malloc(sizeof(NOARVOREB));
+    struct dirent* entrada;
+    int arquivos = 0;
+    
+    if(f == NULL){
+        printf("Erro de leitura\n");
+        return;
+    }
+    else{
+        char caminhoCompleto[250];  
+        sprintf(caminhoCompleto, "../Arvore/%s", nome);
+        while ((entrada = readdir(f)) != NULL) {
+            arquivos++;
+            if(strcmp(entrada->d_name, nome) == 0){
+                FILE *bf = fopen(caminhoCompleto, "rb");
+                if(bf == NULL){
+                    printf("Erro de leitura\n");
+                    return;
+                }
+                fread(&no->n, sizeof(int), 1, bf);
+                fread(&no->folha, sizeof(int), 1, bf);
+                no->chaves = (int *)malloc(no->n * sizeof(int));
+                fread(no->chaves, sizeof(int), no->n, bf);
+                fclose(bf);
+                closedir(f);
+                return no;
+            }
+        }
+    }
+
+}
 
 
 // Função main para testar a árvore B, criar menu
 int main() {
     t = 3;  // Grau mínimo da árvore B
 
+    //teste do gerador de nome
+    char* nome = "CSMRXYKTCTUMZVLCQDXX.dat";
+   // printf("%s\n", nome);
+
     NOARVOREB* raiz = criarNoArvoreB(t, 1);  // Cria a raiz da árvore B
     int opcao, chave;
+    // insercaoCLRS(10, &raiz);
+    // insercaoCLRS(20, &raiz);
+    // insercaoCLRS(5, &raiz);
+    // insercaoCLRS(6, &raiz);
+    // criarArquivoDiretorio(raiz);
+    raiz = coletarArquivoBinario(nome);
+    printf("%d\n", raiz->n);
+    for(int i = 0; i < raiz->n; i++){
+        printf("%d\n", raiz->chaves[i]);
+    }
+    // do {
+    //     printf("\n\nMenu de opções:\n");
+    //     printf("1 - Inserir chave\n");
+    //     printf("2 - Buscar chave\n");
+    //     printf("3 - Imprimir árvore\n");
+    //     printf("4 - Sair\n");
+    //     printf("Digite a opção desejada: ");
+    //     scanf("%d", &opcao);
 
-    do {
-        printf("\n\nMenu de opções:\n");
-        printf("1 - Inserir chave\n");
-        printf("2 - Buscar chave\n");
-        printf("3 - Imprimir árvore\n");
-        printf("4 - Sair\n");
-        printf("Digite a opção desejada: ");
-        scanf("%d", &opcao);
-
-        switch (opcao) {
-            case 1:
-                printf("Digite a chave a ser inserida: ");
-                scanf("%d", &chave);
-                insercaoCLRS(chave, &raiz);
-                //imprimirArvoreB(raiz, 0);
-                break;
-            case 2:
-                printf("Digite a chave a ser buscada: ");
-                scanf("%d", &chave);
-                if (buscarArvoreBBinariamente(chave, raiz) >= 0) {
-                    printf("Chave encontrada!\n");
-                } else {
-                    printf("Chave não encontrada!\n");
-                }
-                break;
-            case 3:
-                imprimirArvoreB(raiz, 0);
-                break;
-            case 4:
-                break;
-            default:
-                printf("Opção inválida!\n");
-        }
-    } while (opcao != 4);
+    //     switch (opcao) {
+    //         case 1:
+    //             printf("Digite a chave a ser inserida: ");
+    //             scanf("%d", &chave);
+    //             insercaoCLRS(chave, &raiz);
+    //             //imprimirArvoreB(raiz, 0);
+    //             break;
+    //         case 2:
+    //             printf("Digite a chave a ser buscada: ");
+    //             scanf("%d", &chave);
+    //             if (buscarArvoreBBinariamente(chave, raiz) >= 0) {
+    //                 printf("Chave encontrada!\n");
+    //             } else {
+    //                 printf("Chave não encontrada!\n");
+    //             }
+    //             break;
+    //         case 3:
+    //             imprimirArvoreB(raiz, 0);
+    //             break;
+    //         case 4:
+    //             break;
+    //         default:
+    //             printf("Opção inválida!\n");
+    //     }
+    // } while (opcao != 4);
 
     return 0;
 }
