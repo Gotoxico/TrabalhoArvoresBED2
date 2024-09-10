@@ -2,9 +2,10 @@
 #define ARVOREB_H
 
 typedef struct noArvoreB{
+    char *NomeArquivo;
     int n;
     int *chaves;
-    char **filhos;
+    NOARVOREB **filhos; 
     int folha;
 }NOARVOREB;
 
@@ -19,6 +20,7 @@ NOARVOREB* buscarPai(int chaveFilho, NOARVOREB* raiz);
 NOARVOREB* remocaoCLRS(int chave, char** raiz);
 char geradorNomeArquivo();
 void criarArquivoDiretorio();
+void imprimirArvoreB(NOARVOREB* raiz, int nivel);
 
 #include "ArvoreB.c"
 #endif
