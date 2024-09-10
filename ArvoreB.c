@@ -19,8 +19,8 @@ NOARVOREB* criarNoArvoreB(int t, int folha){
 }
 
 //Buscar presenca de um no na arvore e retornar a posicao em relacao ao vetor de chaves do no
-int buscarArvoreB(int chave,  char  * raiz){
-    NOARVOREB* r = raiz; //Descobrir modo para esse NOARVOREB receber o no armazenado no arquivo binario
+int buscarArvoreB(int chave, char** raiz){
+    NOARVOREB* r = coletarArquivoBinario(raiz); //Descobrir modo para esse NOARVOREB receber o no armazenado no arquivo binario
     int i = 0;
     while(i <= r->n && chave > r->chaves[i]){
         i = i+1;
@@ -32,7 +32,7 @@ int buscarArvoreB(int chave,  char  * raiz){
         return NULL;
     }
     else{
-        return buscarArvoreB(chave, raiz->filhos[i]);
+        return buscarArvoreB(chave, r->filhos[i]);
     }
 }
 
@@ -72,7 +72,7 @@ int buscarArvoreBBinariamente(int chave, NOARVOREB* raiz) {
 
 //Funcao para dividir chaves e filhos entre filhos y e z de raiz
 NOARVOREB* splitChildArvore(int chave, NOARVOREB* raiz){
-   NOARVOREB* y = raiz->filhos[chave];
+    NOARVOREB* y = raiz->filhos[chave];
     NOARVOREB* z = criarNoArvoreB(t, y->folha);
     z->n = t - 1;
 
@@ -103,7 +103,9 @@ NOARVOREB* splitChildArvore(int chave, NOARVOREB* raiz){
     }
     raiz->chaves[chave] = y->chaves[t];
     raiz->n = raiz->n+1;
+
     //Escrever no y em arquivo binario
+
     //Escrever no z em arquivo binario
     //Escrever no raiz em arquivo binario
 }
@@ -151,24 +153,25 @@ void insercaoNaoCheioArvoreB(int chave, NOARVOREB* raiz) {
 }
 
 
-/*//Funcao para buscar o pai de um no 
+//Funcao para buscar o pai de um no 
 NOARVOREB* buscarPai(int chaveFilho, NOARVOREB* raiz){
     NOARVOREB* pai = raiz;
     while(pai->folha != 0){
-        int i = buscaBinariaNo(chaveFilho, pai, 0, pai->n-1);
-        if(i <= 0 && pai->filhos[-i].folha){
+        int i = -(buscaBinariaNo(chaveFilho, pai, 0, pai->n-1));
+        NOARVOREB* filho = coletarArquivoBinario(pai->filhos[i]);
+        if(i <= 0 && filho->folha){
             return pai;
         }
         else{
-            NOARVOREB* rf = pai->filhos[-i];
+            NOARVOREB* rf = pai->filhos[i];
             buscarPai(chaveFilho, rf);
         }
     }
-}*/
+}
 
 //Funcao para remover CLRS
 NOARVOREB* remocaoCLRS(int chave, char** raiz){
-    NOARVOREB* r = raiz; //Descobrir modo para esse NOARVOREB receber o no armazenado no arquivo binario
+    NOARVOREB* r = coletarArquivoBinario(raiz); //Descobrir modo para esse NOARVOREB receber o no armazenado no arquivo binario
     int presenca = buscarArvoreB(chave, raiz);
     //Se a chave nao estiver presente na arvore, retornar null
     if(presenca == NULL){
@@ -192,16 +195,18 @@ NOARVOREB* remocaoCLRS(int chave, char** raiz){
             else{
                 NOARVOREB* pai = buscarPai(chave, r);
                 int i = buscaBinariaNo(chave, r, 0, r->n-1);
-                if(pai->filhos[i-1].n > t-1){
-                    pai->filhos[i].chaves[(pai->filhos[i].n)+1] = pai->filhos[i-1].chaves[(pai->filhos[i].n)];
-                    pai->filhos[i].n = pai->filhos[i].n + 1;
-                    pai->filhos[i-1].n = pai->filhos[i-1] - 1;
+                if(coletarArquivoBinario(pai->filhos[i-1])->n > t-1){
+                    ;
+                    coletarArquivoBinario(pai->filhos[i])->chaves[(coletarArquivoBinario(pai->filhos[i])->n)+1] = coletarArquivoBinario(pai->filhos[i-1])->chaves[coletarArquivoBinario(pai->filhos[i])->n];
+                    coletarArquivoBinario(pai->filhos[i])->n = coletarArquivoBinario(pai->filhos[i])->n + 1;
+                    coletarArquivoBinario(pai->filhos[i-1])->n = coletarArquivoBinario(pai->filhos[i])->n - 1;
                 }
                 else{
-                    if(pai->filhos[i+1].n > t-1){
-                        pai->filhos[i].chaves[(pai->filhos[i].n)+1] = pai->filhos[i+1].chaves[(pai->filhos[i].n)];
-                        pai->filhos[i].n = pai->filhos[i].n + 1;
-                        pai->filhos[i+1].n = pai->filhos[i+1].n - 1;
+                    
+                    if(coletarArquivoBinario(pai->filhos[i+1])->n > t-1){
+                        coletarArquivoBinario(pai->filhos[i])->chaves[(coletarArquivoBinario(pai->filhos[i])->n)+1] = coletarArquivoBinario(pai->filhos[i+1])->chaves[(coletarArquivoBinario(pai->filhos[i])->n)];
+                        coletarArquivoBinario(pai->filhos[i])->n = coletarArquivoBinario(pai->filhos[i])->n + 1;
+                        coletarArquivoBinario(pai->filhos[i+1])->n = coletarArquivoBinario(pai->filhos[i+1])->n - 1;
                     }
                     else{
                         //Adicionar caso em que os irmaos possuem t-1
@@ -216,32 +221,41 @@ NOARVOREB* remocaoCLRS(int chave, char** raiz){
                 int i = presenca;
                 
                 //Se o filho da esquerda for ficar com mais que t-1, roubar uma chave dele
-                if(r->filhos[i].n >= t){
-                    r->chaves[i] = r->filhos[i].chaves[r->filhos[i].n];
-                    r->filhos[i].n = (r->filhos[i].n)-1;
+                if(coletarArquivoBinario(r->filhos[i])->n >= t){
+                    r->chaves[i] = coletarArquivoBinario(r->filhos[i])->chaves[coletarArquivoBinario(r->filhos[i])->n];
+                    coletarArquivoBinario(r->filhos[i])->n = (coletarArquivoBinario(r->filhos[i])->n)-1;
                 }
                 //Se o filho da direita for ficar com mais que t-1, roubar uma chave dele
-                if(r->filhos[i+1].n >= t){
-                    r->chaves[i] = r->filhos[i+1].chaves[0];
-                    r->filhos[i+1].n = (r->filhos[i+1].n)-1;
+                coletarArquivoBinario(r->filhos[i+1])->n;
+                if(coletarArquivoBinario(r->filhos[i+1])->n >= t){
+                    r->chaves[i] = coletarArquivoBinario(r->filhos[i+1])->chaves[0];
+                    coletarArquivoBinario(r->filhos[i+1])->n = (coletarArquivoBinario(r->filhos[i+1])->n)-1;
                 }
                 //Criar um no com merge como filho de r
+                
                 else{
-                    int folha = r->filhos[i].folha;
+                    int folha = coletarArquivoBinario(r->filhos[i])->folha;
                     NOARVOREB* merge = criarNoArvoreB(t, folha);
-                    for(int i = 0; i < r->filhos[i].n; i++){
-                        merge[i] = r->filhos[i];
-                        merge->n = merge->n + 1;
-                    }
-                    for(int i = (merge->n)+1, j = 0; i < r->filhos[i+1].n, j < r->filhos[i+1].n; i++, j++){
-                        merge[i] = r->filhos[j];
+
+                    //Filho esquerdo
+                    for(int a = 0; a < coletarArquivoBinario(r->filhos[i])->n; a++){
+                        merge->chaves[a] = coletarArquivoBinario(r->filhos[i])->chaves[a];
                         merge->n = merge->n + 1;
                     }
                     
-                    for(int j = i; j <= (r->n) - i - 1; j++){
+                    //Filho direito
+                    for(int a = (merge->n), j = 0; a < coletarArquivoBinario(r->filhos[i+1])->n; a++, j++){
+                        merge->chaves[a] = coletarArquivoBinario(r->filhos[i+1])->chaves[j];
+                        merge->n = merge->n + 1;
+                    }
+                    
+                    //Arrumando os indexes da raiz, o apontamento de filho e a quantidade de chaves
+                    for(int j = i; j < (r->n) - 1; j++){
                         r->chaves[j] = r->chaves[j+1];
                     }
+
                     r->filhos[i] = merge;
+                    r->n = (r->n) - 1;
                 }
             }
             
@@ -261,16 +275,16 @@ char* geradorNomeArquivo(){
     for(int i = 0; i < 26; i++){
         letras[i] = 'a' + i;
     }
-    // Aloca memória para o nome do arquivo (20 letras + ".dat" + '\0')
+    // Aloca memï¿½ria para o nome do arquivo (20 letras + ".dat" + '\0')
     char *caminho = malloc(25 * sizeof(char)); 
     
-    // Gera as 20 letras aleatórias
+    // Gera as 20 letras aleatï¿½rias
     for(int i = 0; i < 20; i++){
         int letra = rand() % 26;
         caminho[i] = letras[letra];
     }
 
-    // Adiciona a extensão ".dat"
+    // Adiciona a extensï¿½o ".dat"
     strcpy(caminho + 20, ".dat");
 
     return caminho;
@@ -324,7 +338,7 @@ void criarArquivoDiretorio(NOARVOREB* no){
 }
 
 //Funcao para ler um arquivo binario e criar no baseado em suas informacoes, no entanto de tras pra frente do arquivo binario
-NOARVOREB* coletarArquivoBinario(char *nome){
+NOARVOREB* coletarArquivoBinario(char** nome){
     DIR *f = opendir("./Arvore");
     struct dirent* entrada;
     int arquivos = 0;
