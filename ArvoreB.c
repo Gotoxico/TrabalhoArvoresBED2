@@ -352,4 +352,104 @@ NOARVOREB* buscarPai(int chaveFilho, NOARVOREB* raiz){
     }
 }
 
+//Funcao para remover CLRS
+NOARVOREB* remocaoCLRS(int chave, char** raiz){
+    NOARVOREB* r = coletarArquivoBinario(raiz); //Descobrir modo para esse NOARVOREB receber o no armazenado no arquivo binario
+    int presenca = buscarArvoreB(chave, raiz);
+    //Se a chave nao estiver presente na arvore, retornar null
+    if(presenca == NULL){
+        return NULL;
+    }
+    else{
+        if(r->folha){
+            //Se for folha e quando remover, a propriedade de elementos t-1 se manter
+            if(r->n-1 >= t-1){
+                int i = 0;
+                while(i < r->n && r->chaves[i] > chave){
+                    i++;
+                }
+                if(r->chaves[i] == chave){
+                    for(int j = i; j<r->n; j++){
+                        r->chaves[j] = r->chaves[j+1];
+                    }
+                }
+            }
+            //Se a propriedade nao se manter, pegar o mais a direita do irmao da esquerda ou o mais a esquerda do irmao da direita e unir, ou entao se os dois possuem t-1, agrupar
+            else{
+                NOARVOREB* pai = buscarPai(chave, r);
+                int i = buscaBinariaNo(chave, r, 0, r->n-1);
+                if(coletarArquivoBinario(pai->filhos[i-1])->n > t-1){
+                    ;
+                    coletarArquivoBinario(pai->filhos[i])->chaves[(coletarArquivoBinario(pai->filhos[i])->n)+1] = coletarArquivoBinario(pai->filhos[i-1])->chaves[coletarArquivoBinario(pai->filhos[i])->n];
+                    coletarArquivoBinario(pai->filhos[i])->n = coletarArquivoBinario(pai->filhos[i])->n + 1;
+                    coletarArquivoBinario(pai->filhos[i-1])->n = coletarArquivoBinario(pai->filhos[i])->n - 1;
+                }
+                else{
+                    
+                    if(coletarArquivoBinario(pai->filhos[i+1])->n > t-1){
+                        coletarArquivoBinario(pai->filhos[i])->chaves[(coletarArquivoBinario(pai->filhos[i])->n)+1] = coletarArquivoBinario(pai->filhos[i+1])->chaves[(coletarArquivoBinario(pai->filhos[i])->n)];
+                        coletarArquivoBinario(pai->filhos[i])->n = coletarArquivoBinario(pai->filhos[i])->n + 1;
+                        coletarArquivoBinario(pai->filhos[i+1])->n = coletarArquivoBinario(pai->filhos[i+1])->n - 1;
+                    }
+                    else{
+                        //Adicionar caso em que os irmaos possuem t-1
+                    }
+                }
+            }
+        }
+
+        else{
+            //Se a chave estiver em um no interno
+            if(r->folha == 0 && buscarBinariaNo(chave, r, 0, r->n-1) > 0){
+                int i = presenca;
+                
+                //Se o filho da esquerda for ficar com mais que t-1, roubar uma chave dele
+                if(coletarArquivoBinario(r->filhos[i])->n >= t){
+                    r->chaves[i] = coletarArquivoBinario(r->filhos[i])->chaves[coletarArquivoBinario(r->filhos[i])->n];
+                    coletarArquivoBinario(r->filhos[i])->n = (coletarArquivoBinario(r->filhos[i])->n)-1;
+                }
+                //Se o filho da direita for ficar com mais que t-1, roubar uma chave dele
+                coletarArquivoBinario(r->filhos[i+1])->n;
+                if(coletarArquivoBinario(r->filhos[i+1])->n >= t){
+                    r->chaves[i] = coletarArquivoBinario(r->filhos[i+1])->chaves[0];
+                    coletarArquivoBinario(r->filhos[i+1])->n = (coletarArquivoBinario(r->filhos[i+1])->n)-1;
+                }
+                //Criar um no com merge como filho de r
+                
+                else{
+                    int folha = coletarArquivoBinario(r->filhos[i])->folha;
+                    NOARVOREB* merge = criarNoArvoreB(t, folha);
+
+                    //Filho esquerdo
+                    for(int a = 0; a < coletarArquivoBinario(r->filhos[i])->n; a++){
+                        merge->chaves[a] = coletarArquivoBinario(r->filhos[i])->chaves[a];
+                        merge->n = merge->n + 1;
+                    }
+                    
+                    //Filho direito
+                    for(int a = (merge->n), j = 0; a < coletarArquivoBinario(r->filhos[i+1])->n; a++, j++){
+                        merge->chaves[a] = coletarArquivoBinario(r->filhos[i+1])->chaves[j];
+                        merge->n = merge->n + 1;
+                    }
+                    
+                    //Arrumando os indexes da raiz, o apontamento de filho e a quantidade de chaves
+                    for(int j = i; j < (r->n) - 1; j++){
+                        r->chaves[j] = r->chaves[j+1];
+                    }
+
+                    r->filhos[i] = merge;
+                    r->n = (r->n) - 1;
+                }
+            }
+            
+            else{
+                //Implementar casos 3 (quando chave nao esta em um no, mas ele e interno)
+            }
+
+        }
+
+    }
+
+}
+
 
