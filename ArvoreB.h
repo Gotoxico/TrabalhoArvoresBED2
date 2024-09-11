@@ -20,8 +20,12 @@ void splitChildArvore(int chave, NOARVOREB* raiz);
 NOARVOREB* buscarPai(int chaveFilho, NOARVOREB* raiz);
 NOARVOREB* remocaoCLRS(int chave, char** raiz);
 char* geradorNomeArquivo();
-void criarArquivoDiretorio();
+char** criarArquivoBinario(char* nome);
+void criarArquivoDiretorio(NOARVOREB* no);
+NOARVOREB* coletarArquivoBinario(char** nome);
 void imprimirArvoreB(NOARVOREB* raiz, int nivel);
+void listarArvoresDiretorio();
+void criarDiretorio();
 
 #include "ArvoreB.c"
 #endif
