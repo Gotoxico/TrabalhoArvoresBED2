@@ -20,6 +20,7 @@ int main(){
     insercaoCLRS(3, &raiz);
     insercaoCLRS(4, &raiz);
 
+    
 
     do{
         printf("1 - Criar diretorio\n");
@@ -43,9 +44,14 @@ int main(){
                 scanf("%d", &chave);
                 printf("\n");
                 insercaoCLRS(chave, &raiz);
-                imprimirArvoreB(raiz, 0);
-                printf("\n%s\n", raiz->NomeArquivo);
-                printf("%s\n%s\n", raiz->filhos[0], raiz->filhos[1]);
+                //imprimirArvoreB(raiz, 0);
+                // printf("\n%s\n", raiz->NomeArquivo);
+                // printf("%s\n%s\n", raiz->filhos[0], raiz->filhos[1]);
+                NOARVOREB* filho = coletarArquivoBinario(raiz->filhos[1]);
+                printf("%d\n", filho->n);
+                for(int i = 0; i < filho->n; i++){
+                    printf("%d\n", filho->chaves[i]);
+                }
                 break;
             case 4:
                 printf("Digite a chave a ser removida: ");

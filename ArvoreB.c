@@ -64,12 +64,6 @@ void criarArquivoBinario(NOARVOREB *no, char *caminhoCompleto) {
         printf("Erro de criação do arquivo\n");
         return;
     }
-    printf("Nome: %s\n", no->NomeArquivo);
-    printf("Folha: %d\n", no->n);
-    printf("Chaves: ");
-    for(int i = 0; i < no->n; i++){
-        printf("%d ", no->chaves[i]);
-    }
 
     // Escreve o número de chaves e a folha
     fwrite(&no->n, sizeof(int), 1, f);
@@ -78,8 +72,14 @@ void criarArquivoBinario(NOARVOREB *no, char *caminhoCompleto) {
     // Grava as chaves
     fwrite(no->chaves, sizeof(int), no->n, f);
 
-    fwrite(no->NomeArquivo, sizeof(char), 25, f);
+    fwrite(&no->NomeArquivo, sizeof(char), 25, f);
     // Aqui você pode adicionar código para gravar os filhos, caso seja necessário.
+    printf("Nome: %s\n", no->NomeArquivo);
+    printf("Folha: %d\n", no->n);
+    printf("Chaves: ");
+    for(int i = 0; i < no->n; i++){
+        printf("%d ", no->chaves[i]);
+    }
 
     fclose(f);
 }
@@ -403,9 +403,9 @@ void insercaoNaoCheioArvoreB(int chave, NOARVOREB * raiz) {
         i++;
         //Leitura do filho no arquivo binário
         NOARVOREB* filho = coletarArquivoBinario(raiz->filhos[i]);
-       // printf("%s\n", filho->NomeArquivo);
-        // printf("%d\n%d\n", filho->n, chave);
         insercaoNaoCheioArvoreB(chave, filho);
+        printf("%d\n%d\n", filho->n, chave);
+        printf("%s\n", filho->NomeArquivo);
         if (filho->n == 2 * t - 1) {
             printf("Split\n");
              splitChildArvoreB(raiz, i);
