@@ -9,23 +9,18 @@
 
 
 int main(){
+    srand(time(NULL));
    //Menu
     NOARVOREB* raiz = criarNoArvoreB(3, 1);
+    raiz->NomeArquivo = "raiz.dat";
     int opcao;
     //inserir 4 chaves
     insercaoCLRS(1, &raiz);
     insercaoCLRS(2, &raiz);
     insercaoCLRS(3, &raiz);
     insercaoCLRS(4, &raiz);
-    printf("Nome do arquivo: %s\n", raiz->NomeArquivo);
 
-    // NOARVOREB * r = coletarArquivoBinario(raiz->NomeArquivo);
-    // printf("N: %d\n", raiz->n);
-    // printf("Nome: %s\n", raiz->NomeArquivo);
-    // for(int i = 0; i < raiz->n; i++){
-    //     printf("Chave: %d\n", raiz->chaves[i]);
-    // }
-/*
+
     do{
         printf("1 - Criar diretorio\n");
         printf("2 - Listar arvores\n");
@@ -46,8 +41,11 @@ int main(){
                 printf("Digite a chave a ser inserida: ");
                 int chave;
                 scanf("%d", &chave);
+                printf("\n");
                 insercaoCLRS(chave, &raiz);
                 imprimirArvoreB(raiz, 0);
+                printf("\n%s\n", raiz->NomeArquivo);
+                printf("%s\n%s\n", raiz->filhos[0], raiz->filhos[1]);
                 break;
             case 4:
                 printf("Digite a chave a ser removida: ");
@@ -72,5 +70,5 @@ int main(){
         }
     }while(opcao != 7);
     return 0;
-*/
+
 }
