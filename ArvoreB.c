@@ -64,6 +64,12 @@ void criarArquivoBinario(NOARVOREB *no, char *caminhoCompleto) {
         printf("Erro de criação do arquivo\n");
         return;
     }
+    printf("Nome: %s\n", no->NomeArquivo);
+    printf("Folha: %d\n", no->n);
+    printf("Chaves: ");
+    for(int i = 0; i < no->n; i++){
+        printf("%d ", no->chaves[i]);
+    }
 
     // Escreve o número de chaves e a folha
     fwrite(&no->n, sizeof(int), 1, f);
@@ -78,7 +84,8 @@ void criarArquivoBinario(NOARVOREB *no, char *caminhoCompleto) {
     fclose(f);
 }
 
-//função para criar um arquivo binario dentro de um diretorio
+//função para criar um arquivo binario dentro de um diretorio no diretorio Arvore chamando a funcao criarArquivoBinario
+
 void criarArquivoDiretorio(NOARVOREB * no, char *nome){
     NOARVOREB *raiz = no;
     DIR *f = opendir("../Arvore");
@@ -92,8 +99,6 @@ void criarArquivoDiretorio(NOARVOREB * no, char *nome){
     else{
         char caminhoCompleto[250];
         snprintf(caminhoCompleto, sizeof(caminhoCompleto), "../Arvore/%s", nome);
-
-      
         criarArquivoBinario(raiz, caminhoCompleto);
         closedir(f);
     }
@@ -369,6 +374,7 @@ void splitChildArvoreB(NOARVOREB* raiz, int i) {
     criarArquivoDiretorio(y, y->NomeArquivo);
     criarArquivoDiretorio(z, raiz->filhos[i+1]);
     criarArquivoDiretorio(raiz, raiz->NomeArquivo);
+    
 }
 
 void insercaoNaoCheioArvoreB(int chave, NOARVOREB * raiz) {
@@ -382,12 +388,13 @@ void insercaoNaoCheioArvoreB(int chave, NOARVOREB * raiz) {
         raiz->chaves[i + 1] = chave;
         
         raiz->n++;
-        printf("%s\n", raiz->NomeArquivo);
+        // printf("%s\n", raiz->NomeArquivo);
+        // for(int j = 0; j < raiz->n; j++){
+        //     printf("%d\n", raiz->chaves[j]);
+        // }
+       // removerArquivoDiretorio(raiz->NomeArquivo);
         criarArquivoDiretorio(raiz, raiz->NomeArquivo);
         printf("Insercao\n");
-        for(int j = 0; j < raiz->n; j++){
-            printf("%d\n", raiz->chaves[j]);
-        }
 -       printf("\n");
     } else {
         while (i >= 0 && chave < raiz->chaves[i]) {
