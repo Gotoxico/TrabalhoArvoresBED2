@@ -25,23 +25,23 @@ int main(){
     insercaoCLRS(5, &raiz);
     insercaoCLRS(6, &raiz);
     insercaoCLRS(7, &raiz);
-    insercaoCLRS(8, &raiz);
-    insercaoCLRS(9, &raiz);
-    insercaoCLRS(10, &raiz);
-    insercaoCLRS(11, &raiz);
-    insercaoCLRS(12, &raiz);
-    insercaoCLRS(13, &raiz);
-    insercaoCLRS(14, &raiz);
-    insercaoCLRS(15, &raiz);
-    insercaoCLRS(16, &raiz);
-    insercaoCLRS(17, &raiz);
-    insercaoCLRS(18, &raiz);
-    insercaoCLRS(19, &raiz);
-    insercaoCLRS(20, &raiz);
-    insercaoCLRS(21, &raiz);
-    insercaoCLRS(22, &raiz);
-    insercaoCLRS(23, &raiz);
-    insercaoCLRS(24, &raiz);
+    // insercaoCLRS(8, &raiz);
+    // insercaoCLRS(9, &raiz);
+    // insercaoCLRS(10, &raiz);
+    // insercaoCLRS(11, &raiz);
+    // insercaoCLRS(12, &raiz);
+    // insercaoCLRS(13, &raiz);
+    // insercaoCLRS(14, &raiz);
+    // insercaoCLRS(15, &raiz);
+    // insercaoCLRS(16, &raiz);
+    // insercaoCLRS(17, &raiz);
+    // insercaoCLRS(18, &raiz);
+    // insercaoCLRS(19, &raiz);
+    // insercaoCLRS(20, &raiz);
+    // insercaoCLRS(21, &raiz);
+    // insercaoCLRS(22, &raiz);
+    // insercaoCLRS(23, &raiz);
+   // insercaoCLRS(24, &raiz);
    // insercaoCLRS(25, &raiz);
 
 
@@ -91,7 +91,7 @@ int main(){
                 printf("Digite a chave a ser removida: ");
                 int chaveRemover;
                 scanf("%d", &chaveRemover);
-                //remocaoCLRS(chaveRemover, raiz->NomeArquivo);
+                remocaoCLRS(chaveRemover, raiz->NomeArquivo);
                 break;
             case 5:
                 printf("Digite a chave a ser buscada: ");
