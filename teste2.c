@@ -5,15 +5,23 @@
 #include <dirent.h>
 
 typedef struct NOARVOREB {
-    char * NomeArquivo;
     int n;
     int folha;
     int *chaves;
     char **filhos;
 } NOARVOREB;
 
-int t;  //Grau mínimo da árvore B
+int t = 3;  //Grau mínimo da árvore B
 
+// Função básica para criar um nó de Árvore B
+NOARVOREB* criarNoArvoreB(int t, int folha) {
+    NOARVOREB* no = (NOARVOREB*) malloc(sizeof(NOARVOREB));
+    no->n = 0;
+    no->chaves = (int*) malloc((2*t - 1) * sizeof(int));
+    no->filhos = (char**) malloc(2 * t * sizeof(char*));
+    no->folha = folha;
+    return no;
+}
 char* geradorNomeArquivo(){
     srand(time(NULL));
    char nome[26];
@@ -30,17 +38,6 @@ char* geradorNomeArquivo(){
     strcat(caminho, ".dat");
 
     return caminho;
-}
-// Função básica para criar um nó de Árvore B
-NOARVOREB* criarNoArvoreB(int t, int folha) {
-    NOARVOREB* no = (NOARVOREB*) malloc(sizeof(NOARVOREB));
-    no->n = 0;
-    no->chaves = (int*) malloc((2*t - 1) * sizeof(int));
-    no->filhos = (char**) malloc(2 * t * sizeof(char*));
-    no->folha = folha;
-    no->NomeArquivo = geradorNomeArquivo();
-    
-    return no;
 }
 
 
@@ -81,9 +78,14 @@ void criarArquivoDiretorio(NOARVOREB * no, char *nome){
         //nome = strcpy(nome, geradorNomeArquivo());
         while ((entrada = readdir(f)) != NULL) {
             arquivos++;
-            
+            if(strcmp(entrada->d_name, nome) == 0){
+                closedir(f);
+                criarArquivoDiretorio(no, nome);
+                return;
+            }
         }
         criarArquivoBinario(raiz, caminhoCompleto);
+        //printf("Aqui");
         free(nome);
         closedir(f);
     }
@@ -115,7 +117,7 @@ void removerArquivoDiretorio(char *nome){
 
 NOARVOREB * coletarArquivoBinario(char *nome){
     DIR *f = opendir("../Arvore");
-    NOARVOREB * no = criarNoArvoreB(t, 1);
+    NOARVOREB *no = (NOARVOREB*) malloc(sizeof(NOARVOREB));
     struct dirent* entrada;
     int arquivos = 0;
     
@@ -138,7 +140,6 @@ NOARVOREB * coletarArquivoBinario(char *nome){
                 fread(&no->folha, sizeof(int), 1, bf);
                 no->chaves = (int *)malloc(no->n * sizeof(int));
                 fread(no->chaves, sizeof(int), no->n, bf);
-                no->NomeArquivo = nome;
                 fclose(bf);
                 closedir(f);
                 return no;
@@ -227,167 +228,119 @@ int buscarArvoreBBinariamente(int chave, NOARVOREB* raiz) {
     return buscarArvoreBBinariamente(chave, proximoFilho);
 }
 
-// Função para fazer o split de um nó filho
-void splitChildArvoreB(NOARVOREB* raiz, int i) {
-    NOARVOREB* y = criarNoArvoreB(t, 0);
-    y = coletarArquivoBinario(raiz->filhos[i]);  
-    NOARVOREB* z = criarNoArvoreB(t, y->folha);
+// Função para dividir um nó filho cheio
+void splitChildArvoreB(NOARVOREB *pai, int i) {
+    NOARVOREB *y = coletarArquivoBinario(pai->filhos[i]);
+    NOARVOREB *z = criarNoArvoreB(t,y->folha);
     z->n = t - 1;
 
+    // Transfere as últimas t-1 chaves de y para z
     for (int j = 0; j < t - 1; j++) {
         z->chaves[j] = y->chaves[j + t];
     }
 
+    // Se y não for folha, transfere os filhos
     if (!y->folha) {
         for (int j = 0; j < t; j++) {
             z->filhos[j] = y->filhos[j + t];
         }
     }
+
     y->n = t - 1;
 
-    for (int j = raiz->n+1; j >= i; j--) {
-        raiz->filhos[j + 1] = raiz->filhos[j];
+    // Insere z como filho de pai
+    for (int j = pai->n; j >= i + 1; j--) {
+        pai->filhos[j + 1] = pai->filhos[j];
     }
+    pai->filhos[i + 1] = geradorNomeArquivo();
 
-    raiz->filhos[i + 1] = z->NomeArquivo;
-
-    for (int j = raiz->n; j >= i-1; j--) {
-        raiz->chaves[j + 1] = raiz->chaves[j];
+    // Move as chaves de pai
+    for (int j = pai->n - 1; j >= i; j--) {
+        pai->chaves[j + 1] = pai->chaves[j];
     }
-    raiz->chaves[i] = y->chaves[t - 1];
-    raiz->n++;
-    criarArquivoDiretorio(y, y->NomeArquivo);
-    criarArquivoDiretorio(z, z->NomeArquivo);
-    criarArquivoDiretorio(raiz, raiz->NomeArquivo);
+    pai->chaves[i] = y->chaves[t - 1];
+    pai->n++;
+
+    // Atualiza os arquivos binários
+    criarArquivoDiretorio(y, pai->filhos[i]);
+    criarArquivoDiretorio(z, pai->filhos[i + 1]);
+    criarArquivoDiretorio(pai, geradorNomeArquivo());
 }
 
-//função para procurar um nome de arquivo em um diretório
-int procurarArquivoDiretorio(char *nome){
-    DIR *f = opendir("../Arvore");
-    struct dirent* entrada;
-    int arquivos = 0;
-    if(f == NULL){
-        printf("Erro ao abrir diretorio\n");
-        return 0;
-    }
+// Função para inserção em um nó que não está cheio
+void insercaoNaoCheioArvoreB(NOARVOREB *no, int chave, char *nome) {
+    int i = no->n - 1;
 
-    else{
-        while ((entrada = readdir(f)) != NULL) {
-            arquivos++;
-            if(strcmp(entrada->d_name, nome) == 0){
-                closedir(f);
-                return 1;
-            }
-        }
-    }
-    return 0;
-}
-
-
-// //Funcao para dividir chaves e filhos entre filhos y e z de raiz
-// NOARVOREB* splitChildArvore(int chave, NOARVOREB* raiz){
-//     NOARVOREB* z = (NOARVOREB*) malloc(sizeof(NOARVOREB));
-//     z->chaves = (int*) malloc(sizeof((2*t-1) * sizeof(int)));
-//     z->filhos = (char**) malloc(sizeof(2*t) * sizeof(char*));
-//     NOARVOREB* y = raiz->filhos[chave];
-//     z->folha = y->folha;
-//     z->n = t-1;
-
-//     //Copia chaves de y para z
-//     for(int j = 1; j < t; j++){
-//         z->chaves[j] = y->chaves[j+t];
-//     }
-
-//     //Se y for no interno, copia filhos de y para z
-//     if(y->folha == 0){
-//         for(int j = 1; j < t+1; j++){
-//             z->filhos[j] = y->filhos[j+t];
-//         }
-//     }
-//     //Modifica quantidade de chaves em y
-//     y->n = t-1;
-
-//     //Move os apontadores para a direita ate a chave
-//     for(int j = raiz->n+1; j > chave; j--){
-//         raiz->filhos[j+1] = raiz->filhos[j];
-//     }
-//     //Aponta z como um dos filhos de raiz
-//     raiz->filhos[chave+1] = z;
-
-//     //Move as chaves para a direita ate a chave - 1
-//     for(int j = raiz->n; j > chave-1; j--){
-//         raiz->chaves[j+1] = raiz->chaves[j];
-//     }
-//     raiz->chaves[chave] = y->chaves[t];
-//     raiz->n = raiz->n+1;
-//     //Escrever no y em arquivo binario
-//     //Escrever no z em arquivo binario
-//     //Escrever no raiz em arquivo binario
-// }
-// Função para inserir em um nó não cheio
-void insercaoNaoCheioArvoreB(int chave, NOARVOREB * raiz) {
-
-    int i = raiz->n;
-    if (raiz->folha) {
-        while (i >= 0 && chave < raiz->chaves[i]) {
-            raiz->chaves[i + 1] = raiz->chaves[i];
+    if (no->folha) {
+        // Insere a chave no nó folha
+        while (i >= 0 && chave < no->chaves[i]) {
+            no->chaves[i + 1] = no->chaves[i];
             i--;
         }
-        raiz->chaves[i + 1] = chave;
-        raiz->n++;
-        criarArquivoDiretorio(raiz, raiz->NomeArquivo);
-
+        no->chaves[i + 1] = chave;
+        no->n++;
+        criarArquivoDiretorio(no, nome);
     } else {
-        while (i >= 0 && chave < raiz->chaves[i]) {
+        // Encontra o filho adequado para descer
+        while (i >= 0 && chave < no->chaves[i]) {
             i--;
         }
         i++;
-        //Leitura do filho no arquivo binário
-        NOARVOREB* filho = coletarArquivoBinario(raiz->filhos[i]);
-        insercaoNaoCheioArvoreB(chave, filho);
+        NOARVOREB *filho = coletarArquivoBinario(no->filhos[i]);
+
+        // Se o filho estiver cheio, divide o nó
         if (filho->n == 2 * t - 1) {
-            splitChildArvoreB(raiz, i);
+            splitChildArvoreB(no, i);
+            if (chave > no->chaves[i]) {
+                i++;
+            }
         }
+
+        // Insere no filho adequado
+        insercaoNaoCheioArvoreB(filho, chave, no->filhos[i]);
     }
 }
 
-// Função para inserção usando o método CLRS
-void insercaoCLRS(int chave, NOARVOREB ** raiz) {
-   NOARVOREB* r = *raiz;
-    insercaoNaoCheioArvoreB(chave, r);
-    if (r->n == (2 * t - 1)) {
-        NOARVOREB* s = criarNoArvoreB(t, 0);
-        s->filhos[0] = s->NomeArquivo;
-        insercaoNaoCheioArvoreB(chave, r);
+// Função para inserção geral na árvore B
+void insercaoCLRS(int chave, char *nome) {
+    NOARVOREB *raiz = coletarArquivoBinario(nome);
+
+        insercaoNaoCheioArvoreB(raiz, chave, nome);
+    if (raiz->n == 2 * t - 1) {
+        // Se a raiz está cheia, cria uma nova raiz
+        NOARVOREB *s = criarNoArvoreB(t,0);  // Novo nó raiz
+        s->filhos[0] = nome;
         splitChildArvoreB(s, 0);
-        s->NomeArquivo = r->NomeArquivo;
-        *raiz = s;
+        char *novoNome = geradorNomeArquivo();
+        criarArquivoDiretorio(s, novoNome);
+        criarArquivoDiretorio(raiz, nome);
+        insercaoNaoCheioArvoreB(s, chave, novoNome);
+    } else {
     }
-        
 }
 
-
-
-// Função main para testar a árvore B, criar menu
+// Função principal para testar a inserção na árvore B
 int main() {
-    t = 3;  // Grau mínimo da árvore B
+    // Gerar nome para o arquivo
+    char* nome = geradorNomeArquivo();
+    printf("Arquivo gerado: %s\n", nome);
 
-    //teste do gerador de nome
-   
-   // printf("%s\n", nome);
+    // Criar a raiz da árvore B
+    NOARVOREB* raiz = criarNoArvoreB(t,1);  // Raiz inicialmente é folha
+    criarArquivoDiretorio(raiz, nome);      // Salvar a raiz no arquivo
 
-    NOARVOREB* raiz = criarNoArvoreB(t, 1);  // Cria a raiz da árvore B
-    raiz->NomeArquivo = "RAIZ.DAT";
-   char *nome = "RAIZ.DAT";
-    // criarArquivoDiretorio(raiz, nome);
-    // int opcao, chave;
-    insercaoCLRS(10, &raiz);
-    insercaoCLRS(20, &raiz);
-    insercaoCLRS(5, &raiz);
-    insercaoCLRS(6, &raiz);
-    insercaoCLRS(12, &raiz);
+    // // Inserir chaves
+    insercaoCLRS(10, nome);
+    insercaoCLRS(20, nome);
+    insercaoCLRS(5, nome);
+    insercaoCLRS(6, nome);
+    insercaoCLRS(12, nome);
+    raiz = coletarArquivoBinario(nome);
+    imprimirArvoreB(raiz, 0);  // Imprimir a árvore B
+    // raiz = coletarArquivoBinario(nome);
+    // for(int i = 0; i < raiz->n; i++){
+    //     printf("%d\n", raiz->chaves[i]);
+    // }
 
-
-    imprimirArvoreB(raiz, 0);
-    
 }
+
