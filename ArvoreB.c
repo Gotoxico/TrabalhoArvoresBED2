@@ -201,8 +201,7 @@ NOARVOREB * coletarArquivoBinario(char *nome){
                 //no->chaves = (int *)malloc(no->n * sizeof(int));
                 fread(no->chaves, sizeof(int), no->n, bf);
                 fread(no->NomeArquivo, sizeof(char), 25, bf);
-                if(!no->folha){
-                   
+                if(!no->folha){ 
                     fread(no->filhos, sizeof(char), (no->n + 1) * 25, bf);
                 }
                 //no->NomeArquivo = malloc(25 * sizeof(char));
@@ -375,79 +374,67 @@ NOARVOREB* buscarPai(int chaveFilho, NOARVOREB* raiz){
     }
 }
 
-// Função para fazer o split de um nó filho
 void splitChildArvoreB(NOARVOREB* raiz, int i) {
-    // printf("Split\n");
-    NOARVOREB* y;
-    y = coletarArquivoBinario(raiz->filhos[i]);  
-    //printf("]\n");
-    NOARVOREB* z = criarNoArvoreB(t, y->folha);
-    // printf("Split\n");
+    // Carrega o nó filho y a partir do arquivo binário correspondente
+    NOARVOREB* y = coletarArquivoBinario(raiz->filhos[i]);  
+    // Cria um novo nó z, que vai receber as metades das chaves de y
+    NOARVOREB* z = criarNoArvoreB(t, y->folha);  
     z->n = t - 1;
 
-    for (int j = 0; j < t-1; j++) {
+    // Copia as últimas t-1 chaves de y para z
+    for (int j = 0; j < t - 1; j++) {
         z->chaves[j] = y->chaves[j + t];
     }
 
+    // Se y não for folha, transfere os filhos correspondentes para z
     if (!y->folha) {
         for (int j = 0; j < t; j++) {
             z->filhos[j] = y->filhos[j + t];
         }
     }
+
+    // Atualiza o número de chaves em y
     y->n = t - 1;
 
-    for (int j = raiz->n+1; j >= i; j--) {
+    // Move os filhos de raiz para dar espaço para o novo filho z
+    for (int j = raiz->n; j >= i + 1; j--) {
         raiz->filhos[j + 1] = raiz->filhos[j];
     }
 
+    // Insere o ponteiro para o novo nó z
     raiz->filhos[i + 1] = z->NomeArquivo;
 
-    for (int j = raiz->n; j >= i-1; j--) {
+    // Move as chaves de raiz para dar espaço para a nova chave
+    for (int j = raiz->n; j >= i; j--) {
         raiz->chaves[j + 1] = raiz->chaves[j];
     }
+
+    // Insere a chave do meio de y em raiz
     raiz->chaves[i] = y->chaves[t - 1];
     raiz->n++;
-    // printf("X[%d] = [", raiz->n);
-    // for(int j=0; j < raiz->n; j++){
-    //     printf("%d, ", raiz->chaves[j]);
-    // }
-    // printf("Y[%d] = [", y->n);
-    // for(int j=0; j < y->n; j++){
-    //     printf("%d, ", y->chaves[j]);
-    // }
-    // printf("]\n");
-    // printf("Z[%d] = [", z->n);
-    // for(int j=0; j < z->n; j++){
-    //     printf("%d, ", z->chaves[j]);
-    // }
-    /*
-    y-nome = raiz.dat
-    raiz-nome = nome do s 
-    z-nome = aleatorio
-    */
+
+    // Exibe os nomes dos nós para fins de depuração
     printf("Nome x: %s\n", raiz->NomeArquivo);
     printf("Nome y: %s\n", y->NomeArquivo);
     printf("Nome z: %s\n", z->NomeArquivo);
 
-   
-    // //raiz->filhos[i] = raiz->NomeArquivo;
-    if(raiz->folha){
-    //     printf("Aqui 1\n");
-        raiz->filhos[i] = raiz->NomeArquivo;
-        raiz->NomeArquivo = y->NomeArquivo;
-        criarArquivoDiretorio(y, raiz->filhos[i]);
-        criarArquivoDiretorio(z, z->NomeArquivo);
-        criarArquivoDiretorio(raiz, raiz->NomeArquivo);
-   }else{
-    //     printf("Aqui 2\n");
+    // Se o nome do arquivo raiz não for "raiz.dat", faz algumas trocas de nomes
+    // if (strcmp(raiz->NomeArquivo, "raiz.dat") != 0) {
+    //     printf("Aqui\n");
        
+    //     criarArquivoDiretorio(y, raiz->filhos[i]);
+    //     criarArquivoDiretorio(z, z->NomeArquivo);
+    //     criarArquivoDiretorio(raiz, raiz->NomeArquivo);
+
+    // } else {
+        // Se for a raiz, grava os arquivos correspondentes
+        printf("Aqui 1\n");
         criarArquivoDiretorio(y, y->NomeArquivo);
         criarArquivoDiretorio(z, z->NomeArquivo);
         criarArquivoDiretorio(raiz, raiz->NomeArquivo);
-    }
-   
-
+    // }
 }
+
 
 void insercaoNaoCheioArvoreB(int chave, NOARVOREB * raiz) {
 
@@ -475,11 +462,13 @@ void insercaoNaoCheioArvoreB(int chave, NOARVOREB * raiz) {
             i--;
         }
         i++;
+        printf("Valor de T: %d\n", t);
         //Leitura do filho no arquivo binário
         NOARVOREB* filho = coletarArquivoBinario(raiz->filhos[i]);
         // printf("%d\n%d\n", filho->n, chave);
         // printf("%s\n", filho->NomeArquivo);
         insercaoNaoCheioArvoreB(chave, filho);
+        //printf("Valor de N: %d\n", filho->n);
         if (filho->n == 2 * t - 1) {
             printf("Split\n");
             splitChildArvoreB(raiz, i);
@@ -490,6 +479,7 @@ void insercaoNaoCheioArvoreB(int chave, NOARVOREB * raiz) {
 
 /// Função para inserção usando o método CLRS
 void insercaoCLRS(int chave, NOARVOREB ** raiz) {
+    
    NOARVOREB* r = *raiz;
     insercaoNaoCheioArvoreB(chave, r);
     if (r->n == (2 * t - 1)) {
@@ -498,13 +488,35 @@ void insercaoCLRS(int chave, NOARVOREB ** raiz) {
         s->filhos[0] = r->NomeArquivo;
         //insercaoNaoCheioArvoreB(chave, r);
         splitChildArvoreB(s, 0);
-        
-        strcpy(s->NomeArquivo,"raiz.dat");
+
         *raiz = s;
-        return;
+
     } 
-    strcpy((*raiz)->NomeArquivo, "raiz.dat");
+    
            
+}
+
+//funcao para remover todos os arquivos de um diretorio
+void removerArquivosDiretorio(){
+    DIR *f = opendir("../Arvore");
+    struct dirent* entrada;
+    int arquivos = 0;
+    if(f == NULL){
+        printf("Erro ao abrir diretorio\n");
+        return;
+    }
+
+    else{
+        while ((entrada = readdir(f)) != NULL) {
+            arquivos++;
+            if(strcmp(entrada->d_name, ".") != 0 && strcmp(entrada->d_name, "..") != 0){
+                char caminhoCompleto[250];
+                snprintf(caminhoCompleto, sizeof(caminhoCompleto), "../Arvore/%s", entrada->d_name);
+                remove(caminhoCompleto);
+            }
+        }
+    }
+    closedir(f);
 }
 
 /*

@@ -10,12 +10,14 @@
 
 int main(){
     srand(time(NULL));
+    removerArquivosDiretorio();
+    
    //Menu
     printf("oi\n");
-    NOARVOREB* raiz = criarNoArvoreB(3, 1);
-   // raiz->NomeArquivo = "raiz.dat";
+    NOARVOREB * raiz = criarNoArvoreB(3, 1);
+    strcpy(raiz->NomeArquivo, "raiz.dat");
     int opcao;
-    //inserir 16 chaves
+    //inserir 19 chaves
     insercaoCLRS(1, &raiz);
     insercaoCLRS(2, &raiz);
     insercaoCLRS(3, &raiz);
@@ -31,7 +33,10 @@ int main(){
     insercaoCLRS(13, &raiz);
     insercaoCLRS(14, &raiz);
     insercaoCLRS(15, &raiz);
-   // insercaoCLRS(16, &raiz);
+    insercaoCLRS(16, &raiz);
+    // insercaoCLRS(17, &raiz);
+    // insercaoCLRS(18, &raiz);
+    // insercaoCLRS(19, &raiz);
 
 
     
@@ -58,13 +63,11 @@ int main(){
                 scanf("%d", &chave);
                 printf("\n");
                 insercaoCLRS(chave, &raiz);
-                printf("%s\n%s\n%s\n", raiz->NomeArquivo, raiz->filhos[0], raiz->filhos[1]);
-                
-                //NOARVOREB* filho = coletarArquivoBinario(raiz->filhos[1]);
-                // printf("%d\n", filho->n);
-                // for(int i = 0; i < filho->n; i++){
-                //     printf("%d\n", filho->chaves[i]);
-                // }
+                printf("%s\n", raiz->NomeArquivo);
+                for(int i = 0; i < raiz->n+1; i++){
+                    printf("%s\n", raiz->filhos[i]);
+                }
+               
                 break;
             case 4:
                 printf("Digite a chave a ser removida: ");
