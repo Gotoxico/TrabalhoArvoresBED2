@@ -91,7 +91,7 @@ int main(){
                 printf("Digite a chave a ser removida: ");
                 int chaveRemover;
                 scanf("%d", &chaveRemover);
-                remocaoCLRS(chaveRemover, raiz->NomeArquivo);
+                remocao2(chaveRemover, &raiz);
                 break;
             case 5:
                 printf("Digite a chave a ser buscada: ");
