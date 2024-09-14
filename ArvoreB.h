@@ -7,7 +7,7 @@ typedef struct noArvoreB{
     int *chaves;
     char **filhos; 
     int folha;
-   // int t;
+    int t;
 }NOARVOREB;
 
 char* geradorNomeArquivo();
