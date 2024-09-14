@@ -28,8 +28,14 @@ void splitChildArvoreB(NOARVOREB* raiz, int i);
 void insercaoNaoCheioArvoreB(int chave, NOARVOREB * raiz);
 void insercaoCLRS(int chave, NOARVOREB ** raiz);
 void removerArquivosDiretorio();
+void listarDiretorios(char *nomeDiretorio);
+void listarDiretorioPai();
+int VerificarDiretorio(char *nomeDiretorio);
 //NOARVOREB* remocaoCLRS(int chave, char* raiz);
+int remocaoCLRS(int chave, char* raiz);
 //void splitChildArvore(int chave, NOARVOREB* raiz);
+void remocao(int chave, char* raiz);
+int remocaoCLRS2(int chave, NOARVOREB** raiz);
 
 #include "ArvoreB.c"
 #endif
