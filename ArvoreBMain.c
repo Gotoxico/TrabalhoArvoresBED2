@@ -15,9 +15,9 @@ int main(){
    //Menu
     printf("oi\n");
     NOARVOREB * raiz = criarNoArvoreB(3, 1);
-    strcpy(raiz->NomeArquivo, "raiz.dat");
+    //strcpy(raiz->NomeArquivo, "raiz.dat");
     int opcao;
-    //inserir 19 chaves
+    //inserir 25 chaves
     insercaoCLRS(1, &raiz);
     insercaoCLRS(2, &raiz);
     insercaoCLRS(3, &raiz);
@@ -34,6 +34,24 @@ int main(){
     insercaoCLRS(14, &raiz);
     insercaoCLRS(15, &raiz);
     insercaoCLRS(16, &raiz);
+    insercaoCLRS(17, &raiz);
+    insercaoCLRS(18, &raiz);
+    insercaoCLRS(19, &raiz);
+    insercaoCLRS(20, &raiz);
+    insercaoCLRS(21, &raiz);
+    insercaoCLRS(22, &raiz);
+    insercaoCLRS(23, &raiz);
+    insercaoCLRS(24, &raiz);
+   // insercaoCLRS(25, &raiz);
+
+
+
+    printf("%s\n", raiz->NomeArquivo);
+    for(int i = 0; i < raiz->n+1; i++){
+        printf("%s\n", raiz->filhos[i]);
+    }
+    printf("\n");
+    // insercaoCLRS(16, &raiz);
     // insercaoCLRS(17, &raiz);
     // insercaoCLRS(18, &raiz);
     // insercaoCLRS(19, &raiz);
