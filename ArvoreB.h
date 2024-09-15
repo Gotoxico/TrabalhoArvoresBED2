@@ -32,10 +32,15 @@ void listarDiretorios(char *nomeDiretorio);
 void listarDiretorioPai();
 int VerificarDiretorio(char *nomeDiretorio);
 //NOARVOREB* remocaoCLRS(int chave, char* raiz);
-int remocaoCLRS(int chave, char* raiz);
+//int remocaoCLRS(int chave, char* raiz);
 //void splitChildArvore(int chave, NOARVOREB* raiz);
-void remocao(int chave, char* raiz);
-int remocaoCLRS2(int chave, NOARVOREB** raiz);
+//void remocao(int chave, char* raiz);
+//int remocaoCLRS2(int chave, NOARVOREB** raiz);
+//void remocao2(int chave, NOARVOREB** raiz);
+int remocaoFolha(int chave, NOARVOREB* r);
+int remocaoNoInterno(int chave, NOARVOREB* r);
+int remocaoCaso3(int chave, NOARVOREB* r);
+void remocaoCLRS(int chave, NOARVOREB* r);
 
 #include "ArvoreB.c"
 #endif
