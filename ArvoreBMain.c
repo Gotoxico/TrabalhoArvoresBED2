@@ -14,7 +14,7 @@ int main(){
     
    //Menu
     printf("oi\n");
-    NOARVOREB * raiz = criarNoArvoreB(3, 1);
+    NOARVOREB * raiz = criarNoArvoreB(t, 1);
     //strcpy(raiz->NomeArquivo, "raiz.dat");
     int opcaoDir, opcao;
     //inserir 25 chaves
@@ -25,24 +25,24 @@ int main(){
     insercaoCLRS(5, &raiz);
     insercaoCLRS(6, &raiz);
     insercaoCLRS(7, &raiz);
-    // insercaoCLRS(8, &raiz);
-    // insercaoCLRS(9, &raiz);
-    // insercaoCLRS(10, &raiz);
-    // insercaoCLRS(11, &raiz);
-    // insercaoCLRS(12, &raiz);
-    // insercaoCLRS(13, &raiz);
-    // insercaoCLRS(14, &raiz);
-    // insercaoCLRS(15, &raiz);
-    // insercaoCLRS(16, &raiz);
-    // insercaoCLRS(17, &raiz);
-    // insercaoCLRS(18, &raiz);
-    // insercaoCLRS(19, &raiz);
-    // insercaoCLRS(20, &raiz);
-    // insercaoCLRS(21, &raiz);
-    // insercaoCLRS(22, &raiz);
-    // insercaoCLRS(23, &raiz);
-   // insercaoCLRS(24, &raiz);
-   // insercaoCLRS(25, &raiz);
+    insercaoCLRS(8, &raiz);
+    insercaoCLRS(9, &raiz);
+    insercaoCLRS(10, &raiz);
+    insercaoCLRS(11, &raiz);
+    insercaoCLRS(12, &raiz);
+    insercaoCLRS(13, &raiz);
+    insercaoCLRS(14, &raiz);
+    insercaoCLRS(15, &raiz);
+    insercaoCLRS(16, &raiz);
+    insercaoCLRS(17, &raiz);
+    insercaoCLRS(18, &raiz);
+    insercaoCLRS(19, &raiz);
+    insercaoCLRS(20, &raiz);
+    insercaoCLRS(21, &raiz);
+    insercaoCLRS(22, &raiz);
+    insercaoCLRS(23, &raiz);
+   insercaoCLRS(24, &raiz);
+   insercaoCLRS(25, &raiz);
 
 
 
@@ -58,27 +58,27 @@ int main(){
 
     char * nomeDiretorio = malloc(256 * sizeof(char));
     
-    do{
-        //menu com opções de abrir arvore existente ou criar nova ou sair
-        printf("1 - Abrir arvore existente\n");
-        printf("2 - Criar nova arvore\n");
-        printf("3 - Sair\n");
-        scanf("%d", &opcaoDir);
+    // do{
+    //     //menu com opções de abrir arvore existente ou criar nova ou sair
+    //     printf("1 - Abrir arvore existente\n");
+    //     printf("2 - Criar nova arvore\n");
+    //     printf("3 - Sair\n");
+    //     scanf("%d", &opcaoDir);
 
-        switch(opcaoDir){
-            case 1:
-                listarDiretorioPai();
-                printf("\nDigite o nome do diretorio: ");
-                scanf("%s", nomeDiretorio);
-                listarDiretorios(nomeDiretorio);
-                if(VerificarDiretorio(nomeDiretorio)){
-                    printf("\nDiretorio nao existe\n");
-                    break;
-                }
-                else{
-                    abrirArquivoDiretorio(nomeDiretorio);
-                }
-                /*
+    //     switch(opcaoDir){
+    //         case 1:
+    //             listarDiretorioPai();
+    //             printf("\nDigite o nome do diretorio: ");
+    //             scanf("%s", nomeDiretorio);
+    //             listarDiretorios(nomeDiretorio);
+    //             if(VerificarDiretorio(nomeDiretorio)){
+    //                 printf("\nDiretorio nao existe\n");
+    //                 break;
+    //             }
+    //             else{
+    //                 abrirArquivoDiretorio(nomeDiretorio);
+    //             }
+                
                 do{
                     printf("1 - Criar diretorio\n");
                     printf("2 - Listar arvores\n");
@@ -130,7 +130,7 @@ int main(){
                     }
                 }while(opcao != 7);
         }
-*/
+/*
                 break;
             case 2:
                 //criarArquivoDiretorio(raiz, raiz->NomeArquivo);
@@ -170,5 +170,4 @@ int main(){
         }
     } while(opcaoDir != 3);
         return 0;
-
-}
+*/

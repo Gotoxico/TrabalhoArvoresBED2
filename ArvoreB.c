@@ -4,7 +4,7 @@
 #include <time.h>
 #include <string.h>
 #include "ArvoreB.h"
-int t = 3;
+int t = 2;
 
 //Funcao para gerar um nome de arquivo aleatorio
 char* geradorNomeArquivo(){
