@@ -94,9 +94,12 @@ int main(){
     //strcpy(raiz->NomeArquivo, "raiz.dat");
     int opcaoDir, opcao;
     // inserir 300 chaves 
-    for (int i = 0; i < 50; i++) {
+    for (int i = 0; i < 20; i++) {
         insercaoCLRS(i, &raiz);
     }
+    insercaoCLRS(-1, &raiz);
+    insercaoCLRS(-2, &raiz);
+    insercaoCLRS(-3, &raiz);
 
 
 
@@ -167,7 +170,7 @@ int main(){
                             printf("Digite a chave a ser removida: ");
                             int chaveRemover;
                             scanf("%d", &chaveRemover);
-                            remocaoCLRS(chaveRemover, raiz);
+                            remocaoCLRS(chaveRemover, &raiz);
                             break;
                         case 5:
                             printf("Digite a chave a ser buscada: ");
