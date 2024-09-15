@@ -434,6 +434,7 @@ void splitChildArvoreB(NOARVOREB* raiz, int i) {
     printf("Nome z: %s\n", z->NomeArquivo);
 
     
+
         // Se for a raiz, grava os arquivos correspondentes
         //strcpy(raiz->filhos[i], y->NomeArquivo);
         printf("\nCRIACAO DO DIRETORIO Y\n");
@@ -443,6 +444,7 @@ void splitChildArvoreB(NOARVOREB* raiz, int i) {
         printf("\nCRIACAO DO DIRETORIO RAIZ\n");
         criarArquivoDiretorio(raiz, raiz->NomeArquivo);
         printf("\n");
+    
     
         
 }
@@ -497,8 +499,10 @@ void insercaoCLRS(int chave, NOARVOREB ** raiz) {
    printf("\nINICIO DA INSERCAO A PARTIR DA RAIZ\n");
     insercaoNaoCheioArvoreB(chave, r);
     if (r->n == (2 * t - 1)) {
+        //strcmp(r->NomeArquivo, geradorNomeArquivo());
         printf("\nSPLIT DA RAIZ CHEIA\n");
         NOARVOREB* s = criarNoArvoreB(t, 0);
+        //strcpy(s->NomeArquivo, "raiz.dat");
         strcpy(s->filhos[0], r->NomeArquivo);
         //insercaoNaoCheioArvoreB(chave, r);
         splitChildArvoreB(s, 0);
@@ -779,7 +783,18 @@ int remocaoNoInterno(int chave, NOARVOREB** raiz){
                 esquerda->chaves[esquerda->n + 1 + j] = direita->chaves[j]; // Copiar chaves do filho direito
             }
             esquerda->n += (direita->n + 1); // Atualizar número de chaves
+            int k = 0;
+            while(k < r->n && r->chaves[k] < chave){
+                k++;
+            }
+            printf("AQUIII");
+            for(int j = r->n-1; j>k; j--){
+                r->chaves[j-1] = r->chaves[j];
+                r->filhos[j] = r->filhos[j+1];
+                printf("%d: %d\n",j, r->chaves[j]);
+            }
             r->n--; // Reduzir o número de chaves na raiz
+            
 
             // Atualizar o arquivo
             criarArquivoDiretorio(esquerda, esquerda->NomeArquivo);

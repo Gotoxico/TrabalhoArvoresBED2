@@ -18,7 +18,7 @@ int main(){
     //strcpy(raiz->NomeArquivo, "raiz.dat");
     int opcaoDir, opcao;
     // inserir 300 chaves 
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 50; i++) {
         insercaoCLRS(i, &raiz);
     }
 
