@@ -1,0 +1,6 @@
+	Decidimos por implementar utilizando uma estrutura de nó com os elementos básicos mais uma cadeia de caracteres para o nome do arquivo e o t da árvore, a fim de descomplicar a implementação das funções requeridas e adjacentes.
+	Além disso, decidimos por criar um diretório nomeado "Diretórios" que abrigará outros diretórios nomeados pelo usuário, com o intuito de facilitar a busca das árvores.
+	As funções de inserção e remoção estavam implementadas em pseudocódigo no material, no entanto tivemos de realizar modificações para a corretude das propriedades da árvore CLRS. Contudo todavia, a função de remoção decidimos por implementar em subfunções, assim como na inserção, para aumentar a modularidade e facilitar a recursão.
+	Optamos por realizar a impressão na horizontal, para melhor visualização no formato 16:9.
+
+	
