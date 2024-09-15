@@ -7,7 +7,7 @@ typedef struct noArvoreB{
     int *chaves;
     char **filhos; 
     int folha;
-    int t;
+    //int t;
 }NOARVOREB;
 
 char* geradorNomeArquivo();
@@ -38,9 +38,10 @@ int VerificarDiretorio(char *nomeDiretorio);
 //int remocaoCLRS2(int chave, NOARVOREB** raiz);
 //void remocao2(int chave, NOARVOREB** raiz);
 int remocaoFolha(int chave, NOARVOREB* r);
-int remocaoNoInterno(int chave, NOARVOREB* r);
-int remocaoCaso3(int chave, NOARVOREB* r);
-void remocaoCLRS(int chave, NOARVOREB* r);
+int remocaoNoInterno(int chave, NOARVOREB** r);
+int remocaoCaso3(int chave, NOARVOREB** r);
+void remocaoCLRS(int chave, NOARVOREB* raiz);
+int buscarFilhoRemocao(int chave, NOARVOREB* raiz);
 
 #include "ArvoreB.c"
 #endif

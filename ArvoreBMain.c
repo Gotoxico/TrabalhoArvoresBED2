@@ -17,46 +17,26 @@ int main(){
     NOARVOREB * raiz = criarNoArvoreB(t, 1);
     //strcpy(raiz->NomeArquivo, "raiz.dat");
     int opcaoDir, opcao;
-    //inserir 25 chaves
-    insercaoCLRS(1, &raiz);
-    insercaoCLRS(2, &raiz);
-    insercaoCLRS(3, &raiz);
-    insercaoCLRS(4, &raiz);
-    insercaoCLRS(5, &raiz);
-    insercaoCLRS(6, &raiz);
-    insercaoCLRS(7, &raiz);
-    insercaoCLRS(8, &raiz);
-    insercaoCLRS(9, &raiz);
-    insercaoCLRS(10, &raiz);
-    insercaoCLRS(11, &raiz);
-    insercaoCLRS(12, &raiz);
-    insercaoCLRS(13, &raiz);
-    insercaoCLRS(14, &raiz);
-    insercaoCLRS(15, &raiz);
-    insercaoCLRS(16, &raiz);
-    insercaoCLRS(17, &raiz);
-    insercaoCLRS(18, &raiz);
-    insercaoCLRS(19, &raiz);
-    insercaoCLRS(20, &raiz);
-    insercaoCLRS(21, &raiz);
-    insercaoCLRS(22, &raiz);
-    insercaoCLRS(23, &raiz);
-   insercaoCLRS(24, &raiz);
-   insercaoCLRS(25, &raiz);
-
-
-
-    printf("%s\n", raiz->NomeArquivo);
-    for(int i = 0; i < raiz->n+1; i++){
-        printf("%s\n", raiz->filhos[i]);
+    // inserir 300 chaves 
+    for (int i = 0; i < 20; i++) {
+        insercaoCLRS(i, &raiz);
     }
-    printf("\n");
+
+
+
+
+
+    // printf("%s\n", raiz->NomeArquivo);
+    // for(int i = 0; i < raiz->n+1; i++){
+    //     printf("%s\n", raiz->filhos[i]);
+    // }
+    // printf("\n");
     // insercaoCLRS(16, &raiz);
     // insercaoCLRS(17, &raiz);
     // insercaoCLRS(18, &raiz);
     // insercaoCLRS(19, &raiz);
 
-    char * nomeDiretorio = malloc(256 * sizeof(char));
+    char * nomeDiretorio = (char*) malloc(256 * sizeof(char));
     
     // do{
     //     //menu com opções de abrir arvore existente ou criar nova ou sair
@@ -111,7 +91,7 @@ int main(){
                             printf("Digite a chave a ser removida: ");
                             int chaveRemover;
                             scanf("%d", &chaveRemover);
-                            remocaoCLRS(chaveRemover, raiz->NomeArquivo);
+                            remocaoCLRS(chaveRemover, raiz);
                             break;
                         case 5:
                             printf("Digite a chave a ser buscada: ");
