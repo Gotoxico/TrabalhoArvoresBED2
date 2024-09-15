@@ -40,7 +40,7 @@ int VerificarDiretorio(char *nomeDiretorio);
 int remocaoFolha(int chave, NOARVOREB* r);
 int remocaoNoInterno(int chave, NOARVOREB** r);
 int remocaoCaso3(int chave, NOARVOREB** r);
-void remocaoCLRS(int chave, NOARVOREB* raiz);
+void remocaoCLRS(int chave, NOARVOREB** raiz);
 int buscarFilhoRemocao(int chave, NOARVOREB* raiz);
 
 #include "ArvoreB.c"
