@@ -43,7 +43,7 @@ int remocaoFolha(int chave, NOARVOREB* r, char* nomeDiretorio);
 int remocaoNoInterno(int chave, NOARVOREB** raiz, char* nomeDiretorio);
 int remocaoCaso3(int chave, NOARVOREB** raiz, char* nomeDiretorio);
 int buscarFilhoRemocao(int chave, NOARVOREB* raiz);
-void remocaoCLRS(int chave, NOARVOREB* raiz, char* nomeDiretorio);
+void remocaoCLRS(int chave, NOARVOREB** raiz, char* nomeDiretorio);
 
 #include "ArvoreB.c"
 #endif
