@@ -708,7 +708,6 @@ int remocaoNoInterno(int chave, NOARVOREB** raiz){
          // Caso 2a: Se o filho à esquerda tem pelo menos t chaves, substituímos pela maior chave da subárvore esquerda
         if (esquerda->n >= t) {
         
-            printf("Caso 2a\n");
             int maior = esquerda->chaves[esquerda->n - 1]; // Maior chave à esquerda
             //Remover o maior
             esquerda->n--;
@@ -725,7 +724,6 @@ int remocaoNoInterno(int chave, NOARVOREB** raiz){
         // Caso 2b: Se o filho à direita tem pelo menos t chaves, substituímos pela menor chave da subárvore direita
         NOARVOREB* direita = coletarArquivoBinario(r->filhos[i + 1]);
         if (direita->n >= t) {
-            printf("Caso 2b\n");
             int menor = direita->chaves[0]; // Menor chave à direita
             //Remover o menor
             for (int j = 0; j < direita->n - 1; j++) {
@@ -751,7 +749,6 @@ int remocaoNoInterno(int chave, NOARVOREB** raiz){
         // Caso 2c: Se ambos os filhos têm t-1 chaves, fazemos merge
         else {
             // Unir os filhos esquerda e direita
-            printf("Caso 2c\n");
             esquerda->chaves[esquerda->n] = r->chaves[i]; // Mover chave da raiz para o filho esquerdo
             for (int j = 0; j < direita->n; j++) {
                 esquerda->chaves[esquerda->n + 1 + j] = direita->chaves[j]; // Copiar chaves do filho direito
@@ -761,12 +758,8 @@ int remocaoNoInterno(int chave, NOARVOREB** raiz){
             while(k < r->n && r->chaves[k] < chave){
                 k++;
             }
-            printf("AQUIII\n");
-            printf("Valor de k: %d\n", k);
             for(int j = k; j < r->n - 1; j++){
                 r->chaves[j] = r->chaves[j+1];
-                // strcpy(r->filhos[j], r->filhos[j+1]);
-                printf("%d: %d\n",j, r->chaves[j]);
             }
 
             for(int j = k+1; j < r->n; j++){
@@ -791,28 +784,18 @@ int remocaoNoInterno(int chave, NOARVOREB** raiz){
 
 // Função principal de remoção
 void remocaoCLRS(int chave, NOARVOREB** raiz){
-    printf("\nInicio da remocao\n");
-    printf("Folha: %d\n", (*raiz)->folha);
-    for(int i = 0; i < (*raiz)->n; i++){
-        printf("%d ", (*raiz)->chaves[i]);
-    }
-    printf("\n============\n");
+   
     if ((*raiz)->folha) {
         NOARVOREB* r = *raiz;
-        printf("\nRemocao Folha\n");
         remocaoFolha(chave, r);  // Tratar a remoção de folhas
         return;
     } else {
-        printf("\nRemocao No Interno\n");
         int a = remocaoNoInterno(chave, raiz);  // Tratar a remoção de nós internos
-        printf("Valor de a: %d\n", a);
         if (a) {
             return;
         }
 
-        printf("Remocao caso 3\n");
         int b = remocaoCaso3(chave, raiz);
-        printf("Valor de b: %d\n", b);
         if (b) {
             return;
         }
@@ -822,10 +805,8 @@ void remocaoCLRS(int chave, NOARVOREB** raiz){
         if (c < 0) {
             c = -c-1;
         }
-        printf("Valor de c: %d\n", c);
         NOARVOREB * r = *raiz;
         NOARVOREB* filho = coletarArquivoBinario(r->filhos[c]);
-        printf("Arquivo filho: %s\n", filho->NomeArquivo);
         remocaoCLRS(chave, &filho);  // Chamada recursiva para o filho
     }
 }
