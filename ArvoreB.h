@@ -20,9 +20,9 @@ void listarArvoresDiretorio();
 char * criarDiretorio();
 void imprimirArvoreB(NOARVOREB* raiz, int nivel);
 int procurarArquivoDiretorio(char *nome);
-int buscarArvoreB(int chave, char* raiz);
+int buscarArvoreB(int chave, NOARVOREB* raiz);
 int buscaBinariaNo(int chave, NOARVOREB* raiz, int limiteInferior, int limiteSuperior);
-int buscarArvoreBBinariamente(int chave, char* raiz);
+int buscarArvoreBBinariamente(int chave, NOARVOREB* raiz);
 NOARVOREB* buscarPai(int chaveFilho, NOARVOREB* raiz);
 void splitChildArvoreB(NOARVOREB* raiz, int i);
 void insercaoNaoCheioArvoreB(int chave, NOARVOREB * raiz);
@@ -42,6 +42,7 @@ int remocaoNoInterno(int chave, NOARVOREB** r);
 int remocaoCaso3(int chave, NOARVOREB** r);
 void remocaoCLRS(int chave, NOARVOREB** raiz);
 int buscarFilhoRemocao(int chave, NOARVOREB* raiz);
+//int buscarChaveNO(int chave, NOARVOREB* raiz);
 
 #include "ArvoreB.c"
 #endif

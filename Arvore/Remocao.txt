@@ -1,0 +1,304 @@
+// Função para remover de nó folha
+int remocaoFolha(int chave, NOARVOREB* r){
+    //Caso 1: A chave está em uma folha
+    printf("Remoção em folha\n");
+    if (r->folha) {
+        int i = 0;
+        while (i < r->n && r->chaves[i] < chave) {
+            i++;
+        }
+      
+        // Se a chave foi encontrada, removê-la
+        if (i < r->n && r->chaves[i] == chave) {
+            printf("Chave encontrada\n");
+            for (int j = i; j < r->n - 1; j++) {
+                r->chaves[j] = r->chaves[j + 1];
+            }
+            r->n--; // Atualizando o número de chaves
+           
+            printf("Valores:\n\n");
+            for(int j = 0; j < r->n; j++){
+                printf("%d\n", r->chaves[j]);
+            }
+            printf("\n");
+            printf("Criando arquivo\n");
+            // Atualizando o nó no arquivo binário
+            criarArquivoDiretorio(r, r->NomeArquivo);
+            return 1;  // Sucesso
+        }
+        // Se a chave não foi encontrada
+        return 0;
+    }
+    return 0;
+}
+
+
+// Função para tratar remoção de caso 3 (filho com t-1 chaves)
+int remocaoCaso3(int chave, NOARVOREB** raiz){
+    NOARVOREB* r = *raiz;
+    int i = buscaBinariaNo(chave, r, 0, r->n - 1); // Busca binária para encontrar a posição da chave
+
+    // Se a chave não está no nó, ajustar índice para o filho correto
+    if (i < 0) {
+        i = -i - 1;  // Corrigindo índice para o filho correto
+    } else {
+        // Chave foi encontrada no nó raiz (tratar remoção em nós internos posteriormente)
+        return 0;
+    }
+    printf("Valor de i: %d\n", i);
+    NOARVOREB* filho = coletarArquivoBinario(r->filhos[i]);
+    
+
+    // Caso 3a: Se o filho tem t-1 chaves, faz balanceamento
+    if (filho->n == (t - 1) ) {
+        printf("\nENTRANDO NO CASO 3\n");
+        NOARVOREB* irmaoEsquerdo = (i > 0) ? coletarArquivoBinario(r->filhos[i - 1]) : NULL;
+        printf("Recebeu irmao esquerdo\n");
+        if(irmaoEsquerdo){
+            imprimirArvoreB(irmaoEsquerdo, 0);
+        }
+        NOARVOREB* irmaoDireito = (i < r->n) ? coletarArquivoBinario(r->filhos[i+1]) : NULL;
+        printf("Recebeu irmao direito\n");
+        if(irmaoDireito){
+            imprimirArvoreB(irmaoDireito, 0);
+        }
+
+        // Emprestar do irmão esquerdo
+        if (irmaoEsquerdo && irmaoEsquerdo->n >= t) {
+            printf("Caso 3a: Empréstimo do irmão esquerdo\n");
+            for (int j = filho->n; j > 0; j--) {
+                filho->chaves[j] = filho->chaves[j - 1];
+            }
+            for(int j = filho->n + 1; j > 0; j--){
+                strcpy(filho->filhos[j], filho->filhos[j-1]);
+            }
+            strcpy(filho->filhos[0], irmaoEsquerdo->filhos[irmaoEsquerdo->n]);
+            filho->chaves[0] = r->chaves[i - 1];  // Pega chave da raiz
+            r->chaves[i - 1] = irmaoEsquerdo->chaves[irmaoEsquerdo->n - 1];  // Atualiza raiz
+            filho->n++;
+            irmaoEsquerdo->n--;
+
+            criarArquivoDiretorio(irmaoEsquerdo, irmaoEsquerdo->NomeArquivo);
+            criarArquivoDiretorio(filho, filho->NomeArquivo);
+            return 1;
+        }
+        // Emprestar do irmão direito
+        else if (irmaoDireito && irmaoDireito->n >= t) {
+            printf("Caso 3a: Empréstimo do irmão direito\n");
+            filho->chaves[filho->n] = r->chaves[i];  // Pega chave da raiz
+            r->chaves[i] = irmaoDireito->chaves[0];  // Atualiza raiz
+            strcpy(filho->filhos[filho->n + 1], irmaoDireito->filhos[0]);  // Atualiza filhos
+            for (int j = 0; j < irmaoDireito->n - 1; j++) {
+                irmaoDireito->chaves[j] = irmaoDireito->chaves[j + 1];  // Mover chaves no irmão direito  // Mover filhos no irmão direito
+            }
+            for(int j = 0; j < irmaoDireito->n; j++){
+                strcpy(irmaoDireito->filhos[j], irmaoDireito->filhos[j+1]);
+            }
+            filho->n++;
+            irmaoDireito->n--;
+            remocaoCLRS(chave, &filho);  // Chamar recursivamente para remover a chave
+
+            criarArquivoDiretorio(irmaoDireito, irmaoDireito->NomeArquivo);
+            criarArquivoDiretorio(filho, filho->NomeArquivo);
+            return 1;
+        }
+        // Merge com o irmão direito
+        else if (irmaoDireito) {
+            printf("Caso 3b: Merge com o irmão direito\n");
+            filho->chaves[filho->n] = r->chaves[i];  // Mover chave da raiz para o filho
+
+
+            for (int j = 0; j < irmaoDireito->n; j++) {
+                filho->chaves[filho->n + 1 + j] = irmaoDireito->chaves[j];  // Copiar chaves do irmão direito
+            }
+            for(int j = 0; j < irmaoDireito->n + 1; j++){
+                strcpy(filho->filhos[filho->n + 1 + j], irmaoDireito->filhos[j]);
+            }
+            filho->n += irmaoDireito->n + 1;
+            
+            for(int j = i; j < r->n; j++){
+                r->chaves[j] = r->chaves[j+1];
+            }
+            for(int j = i+1; j < r->n + 1; j++){
+                strcpy(r->filhos[j], r->filhos[j+1]);
+            }
+            r->n--;  // Atualiza número de chaves na raiz
+            printf("\n=========================\nImpriimir filho\n");
+            imprimirArvoreB(filho, 0);
+
+            criarArquivoDiretorio(filho, filho->NomeArquivo);
+            criarArquivoDiretorio(r, r->NomeArquivo);
+            filho = coletarArquivoBinario(filho->NomeArquivo);
+            remocaoCLRS(chave, &filho);  // Chamar recursivamente para remover a chave
+            *raiz = filho;
+            //criarArquivoDiretorio(r, r->NomeArquivo);
+            free(irmaoDireito);  // Libera o nó do irmão direito
+            return 1;
+        
+        }
+        else{
+            printf("Caso 3b: Merge com o irmão esquerdo\n");
+            irmaoEsquerdo->chaves[irmaoEsquerdo->n] = r->chaves[i - 1];  // Mover chave da raiz para o irmão esquerdo
+
+            for (int j = 0; j < filho->n; j++) {
+                irmaoEsquerdo->chaves[irmaoEsquerdo->n + 1 + j] = filho->chaves[j];  // Copiar chaves do filho
+            }
+            for(int j = 0; j < filho->n + 1; j++){
+                strcpy(irmaoEsquerdo->filhos[irmaoEsquerdo->n + 1 + j], filho->filhos[j]);
+            }
+            irmaoEsquerdo->n += filho->n + 1;
+
+            for(int j = i-1; j < r->n; j++){
+                r->chaves[j] = r->chaves[j+1];
+            }
+            for(int j = i; j < r->n + 1; j++){
+                strcpy(r->filhos[j], r->filhos[j+1]);
+            }
+            r->n--;  // Atualiza número de chaves na raiz
+            
+            //remocaoCLRS(chave, &irmaoEsquerdo);  // Chamar recursivamente para remover a chave
+            criarArquivoDiretorio(irmaoEsquerdo, irmaoEsquerdo->NomeArquivo);
+            criarArquivoDiretorio(r, r->NomeArquivo);
+            irmaoEsquerdo = coletarArquivoBinario(irmaoEsquerdo->NomeArquivo);
+            remocaoCLRS(chave, &irmaoEsquerdo);  // Chamar recursivamente para remover a chave
+            printf("\nN de Raiz: %d\n", r->n);
+            *raiz = irmaoEsquerdo;
+            free(filho);  // Libera o nó do filho
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int remocaoNoInterno(int chave, NOARVOREB** raiz){
+    NOARVOREB* r = *raiz;
+    printf("\nINICIO DA REMOCAO NO INTERNO\n");
+    // Caso 2: A chave está em um nó interno
+    int i = buscaBinariaNo(chave, r, 0, r->n - 1); // Busca binária para encontrar a posição da chave
+    printf("Valor de i: %d\n", i);
+    printf("Valor de n: %d\n\n", r->n);
+    if (i < 0) {
+        i = -i - 1;  // Corrigindo índice para o filho correto
+    }
+    if(r->n >= t){
+        NOARVOREB* esquerda = coletarArquivoBinario(r->filhos[i]);
+        printf("i>0\n");
+        // Se o filho à esquerda tem pelo menos t chaves, substituímos pela maior chave da subárvore esquerda
+        if (esquerda->n >= t) {
+            printf("Caso 2a\n");
+            int maior = esquerda->chaves[(esquerda->n) - 1]; // Maior chave à esquerda
+            //remocaoCLRS(maior, &esquerda); // Remover o maior
+            esquerda->n--;
+            r->chaves[i] = maior; // Substituir a chave na raiz
+            printf("Raiz chaves[i]: %d\n", r->chaves[i]);
+            //(*raiz) = r;
+            criarArquivoDiretorio(r, r->NomeArquivo); // Atualizar
+            criarArquivoDiretorio(esquerda, esquerda->NomeArquivo); // Atualizar filho
+            free(esquerda);
+            free(r);
+            printf("Raiz chaves[i]: %d\n", r->chaves[i]);
+            return 1;
+        }
+
+        // Se o filho à direita tem pelo menos t chaves, substituímos pela menor chave da subárvore direita
+        NOARVOREB* direita = coletarArquivoBinario(r->filhos[i + 1]);
+        if (direita->n >= t) {
+            printf("Caso 2b\n");
+            int menor = direita->chaves[0]; // Menor chave à direita
+            //Remover o menor
+            for(int j = 0; j < (direita->n) - 1; j++){
+                direita->chaves[j] = direita->chaves[j+1];
+            }
+            direita->n--;
+            //remocaoCLRS(menor, &direita); // Remover o menor
+            r->chaves[i] = menor; // Substituir a chave na raiz
+            printf("Raiz chaves[i]: %d\n", r->chaves[i]);
+            //(*raiz) = r;
+            criarArquivoDiretorio(r, r->NomeArquivo); // Atualizar
+            criarArquivoDiretorio(direita, direita->NomeArquivo); // Atualizar filho
+            free(direita);
+            free(r);
+            //printf("Raiz chaves[i]: %d\n", raiz->chaves[i]);
+            return 1;
+        }
+
+        // Caso 2c: Se ambos os filhos têm t-1 chaves, fazemos merge
+        else {
+            // Unir os filhos esquerda e direita
+            printf("Caso 2c\n");
+            esquerda->chaves[esquerda->n] = r->chaves[i]; // Mover chave da raiz para o filho esquerdo
+            for (int j = 0; j < direita->n; j++) {
+                esquerda->chaves[esquerda->n + 1 + j] = direita->chaves[j]; // Copiar chaves do filho direito
+            }
+            esquerda->n += (direita->n + 1); // Atualizar número de chaves
+            int k = 0;
+            while(k < r->n && r->chaves[k] < chave){
+                k++;
+            }
+            printf("AQUIII\n");
+            for(int j = r->n-1; j>k; j--){
+                r->chaves[j-1] = r->chaves[j];
+                // strcpy(r->filhos[j], r->filhos[j+1]);
+                printf("%d: %d\n",j, r->chaves[j]);
+            }
+
+            for(int j = i+1; j < r->n; j++){
+                strcpy(r->filhos[j], r->filhos[j+1]);
+            }
+            r->n--; // Reduzir o número de chaves na raiz
+            
+
+            // Atualizar o arquivo
+            criarArquivoDiretorio(esquerda, esquerda->NomeArquivo);
+            criarArquivoDiretorio(r, r->NomeArquivo);
+            free(direita);
+            
+
+            // Recursão para remover do nó esquerdo após a fusão
+            remocaoCLRS(chave, &esquerda);
+            return 1;
+        }
+    }
+    return 0;
+}
+
+// Função principal de remoção
+void remocaoCLRS(int chave, NOARVOREB** raiz){
+    printf("\nInicio da remocao\n");
+    printf("Folha: %d\n", (*raiz)->folha);
+    for(int i = 0; i < (*raiz)->n; i++){
+        printf("%d ", (*raiz)->chaves[i]);
+    }
+    printf("\n============\n");
+    if ((*raiz)->folha) {
+        NOARVOREB* r = *raiz;
+        printf("\nRemocao Folha\n");
+        remocaoFolha(chave, r);  // Tratar a remoção de folhas
+        return;
+    } else {
+        printf("\nRemocao No Interno\n");
+        int a = remocaoNoInterno(chave, raiz);  // Tratar a remoção de nós internos
+        printf("Valor de a: %d\n", a);
+        if (a) {
+            return;
+        }
+
+        printf("Remocao caso 3\n");
+        int b = remocaoCaso3(chave, raiz);
+        printf("Valor de b: %d\n", b);
+        if (b) {
+            return;
+        }
+
+        // Busca binária e remoção recursiva em filhos
+        int c = buscaBinariaNo(chave, (*raiz), 0, (*raiz)->n - 1);
+        if (c < 0) {
+            c = -c-1;
+        }
+        printf("Valor de c: %d\n", c);
+        NOARVOREB * r = *raiz;
+        NOARVOREB* filho = coletarArquivoBinario(r->filhos[c]);
+        printf("Arquivo filho: %s\n", filho->NomeArquivo);
+        remocaoCLRS(chave, &filho);  // Chamada recursiva para o filho
+    }
+}

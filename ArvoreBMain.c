@@ -18,12 +18,12 @@ int main(){
     //strcpy(raiz->NomeArquivo, "raiz.dat");
     int opcaoDir, opcao;
     // inserir 300 chaves 
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 19; i++) {
         insercaoCLRS(i, &raiz);
     }
-    insercaoCLRS(-1, &raiz);
-    insercaoCLRS(-2, &raiz);
-    insercaoCLRS(-3, &raiz);
+    // insercaoCLRS(-1, &raiz);
+    // insercaoCLRS(-2, &raiz);
+    // insercaoCLRS(-3, &raiz);
 
 
 
@@ -100,7 +100,7 @@ int main(){
                             printf("Digite a chave a ser buscada: ");
                             int chaveBusca;
                             scanf("%d", &chaveBusca);
-                            buscarArvoreBBinariamente(chaveBusca, raiz->NomeArquivo);
+                            buscarArvoreB(chaveBusca, raiz);
                             break;
                         case 6:
                             imprimirArvoreB(raiz, 0);
