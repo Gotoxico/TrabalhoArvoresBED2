@@ -414,36 +414,61 @@ void listarArvores(){
     closedir(f);
 }
 
-char * geradorArquivoRaiz(NOARVOREB* raiz){
+char* geradorArquivoRaiz(NOARVOREB* raiz) {
     DIR *f = opendir("../Diretorios/Raizes");
     struct dirent* entrada;
     int arquivos = 0;
     char* nomeArvore = (char*) malloc(256 * sizeof(char));
-    strcpy(nomeArvore, raiz->NomeArquivo);
-    RAIZARVOREB* r = (RAIZARVOREB*) malloc(sizeof(RAIZARVOREB));
-    if (f == NULL) {
-        printf("Erro ao abrir diretorio\n");
-        return;
+    
+    if (nomeArvore == NULL) {
+        printf("Erro ao alocar memória para nomeArvore\n");
+        return NULL;
     }
-    else{
-        while((entrada = readdir(f)) != NULL){
+
+    if (f == NULL) {
+        printf("Erro ao abrir o diretório ../Diretorios/Raizes\n");
+        free(nomeArvore);
+        return NULL;
+    }
+
+    // Contar quantos arquivos já existem no diretório
+     while((entrada = readdir(f)) != NULL){
             arquivos++;
         }
-        char* caminho = (char*) malloc(256*sizeof(char));
-        snprintf(nomeArvore, 256, "Arvore%d.dat", arquivos + 1);
-        snprintf(caminho, 256, "../Diretorios/Raizes/Arvore%d.dat", arquivos + 1);
-        FILE *file = fopen(caminho, "wb");
-        if(file == NULL){
-            perror("Erro ao criar arquivo");
-            return;
-        }
-        fwrite(raiz->NomeArquivo, sizeof(char), strlen(raiz->NomeArquivo) + 1, file);
 
-        fclose(file);
+    // Gerar o nome do novo arquivo da árvore
+    snprintf(nomeArvore, 256, "Arvore%d.dat", arquivos + 1);
+
+    // Gerar o caminho completo do novo arquivo
+    char caminho[256];
+    snprintf(caminho, 256, "../Diretorios/Raizes/%s", nomeArvore);
+
+    // Criar o arquivo binário para a árvore
+    FILE *file = fopen(caminho, "wb");
+    if (file == NULL) {
+        perror("Erro ao criar arquivo");
+        free(nomeArvore);
         closedir(f);
-        return nomeArvore;
+        return NULL;
     }
+
+    // Escrever o nome do arquivo da árvore raiz no arquivo
+    if (fwrite(raiz->NomeArquivo, sizeof(char), strlen(raiz->NomeArquivo) + 1, file) != strlen(raiz->NomeArquivo) + 1) {
+        perror("Erro ao escrever no arquivo");
+        fclose(file);
+        free(nomeArvore);
+        closedir(f);
+        return NULL;
+    }
+
+    // Fechar o arquivo e o diretório
+    fclose(file);
+    closedir(f);
+
+    // Retornar o nome do arquivo gerado
+    return nomeArvore;
 }
+
 
 NOARVOREB * leituraArquivoRaiz(char* nome){
     DIR *f = opendir("../Diretorios/Raizes");
@@ -541,7 +566,7 @@ void atualizarNomeArquivoRaiz(NOARVOREB* raiz, char* nomeArquivo){
 int remocaoCaso3(int chave, NOARVOREB** raiz){
     NOARVOREB* r = *raiz;
     int i = buscaBinariaNo(chave, r, 0, r->n - 1); // Busca binária para encontrar a posição da chave
-
+    printf("CASO 3\n");
     // Se a chave não está no nó, ajustar índice para o filho correto
     if (i < 0) {
         i = -i - 1;  // Corrigindo índice para o filho correto
@@ -668,6 +693,7 @@ int remocaoCaso3(int chave, NOARVOREB** raiz){
 
 int remocaoNoInterno(int chave, NOARVOREB** raiz){
     NOARVOREB* r = *raiz;
+    printf("REMOCAO NO INTERNO\n");
     // Caso 2: A chave está em um nó interno
     int i = buscaBinariaNo(chave, r, 0, r->n - 1); // Busca binária para encontrar a posição da chave
   
@@ -752,7 +778,7 @@ int remocaoNoInterno(int chave, NOARVOREB** raiz){
 
 // Função principal de remoção
 void remocaoCLRS(int chave, NOARVOREB** raiz){
-   
+   printf("REMOCAO\n");
     if ((*raiz)->folha) {
         NOARVOREB* r = *raiz;
          remocaoFolha(chave, r);  // Tratar a remoção de folhas
@@ -773,9 +799,71 @@ void remocaoCLRS(int chave, NOARVOREB** raiz){
         if (c < 0) {
             c = -c-1;
         }
-         NOARVOREB * r = raiz;
+        printf("Buscando filho %d\n", c);
+         NOARVOREB * r = *raiz;
         NOARVOREB* filho = abrirArquivoDiretorio(r->filhos[c]);
-         remocaoCLRS(chave, filho);  // Chamada recursiva para o filho
+         remocaoCLRS(chave, &filho);  // Chamada recursiva para o filho
     }
+}void removerArvore(char* nome) {
+    NOARVOREB* raiz = abrirArquivoDiretorio(nome);
+    FILE * f = opendir("../Diretorios/Arvore");
+
+    if (raiz == NULL) {
+        printf("Erro ao abrir arquivo da árvore: %s\n", nome);
+        return;
+    }
+
+    // Se não é uma folha, percorre recursivamente os filhos
+    if (!raiz->folha) {
+        for (int i = 0; i < raiz->n + 1; i++) {
+            printf("%d\n", i);
+            removerArvore(raiz->filhos[i]);  // Remoção recursiva dos filhos
+        }
+    }
+
+    // Monta o caminho completo do arquivo a ser removido
+    char caminhoCompleto[250];
+    snprintf(caminhoCompleto, sizeof(caminhoCompleto), "../Diretorios/Arvore/%s", nome);
+
+    // Remove o arquivo e verifica se foi bem-sucedido
+    if (remove(caminhoCompleto) == 0) {
+        printf("Arquivo %s removido com sucesso.\n", caminhoCompleto);
+    } else {
+        printf("Erro ao remover o arquivo %s.\n", caminhoCompleto);
+    }
+    closedir(f);
+    // Libera a memória alocada para o nó
+    free(raiz);
 }
+
+
+
+void removerArvoreRaiz(char* nome) {
+    NOARVOREB* raiz = leituraArquivoRaiz(nome);
+    FILE * f = opendir("../Diretorios/Raizes");
+    
+    if (raiz == NULL) {
+        printf("Erro ao abrir arquivo de raiz: %s\n", nome);
+        return;
+    }
+
+    printf("\nREMOCAO ARVORE RAIZ: %s\n", nome);
+
+    // Monta o caminho completo do arquivo raiz a ser removido
+    char * caminhoCompleto = (char*) malloc(256 * sizeof(char));
+    snprintf(caminhoCompleto, 256, "../Diretorios/Raizes/%s", nome);
+
+    // Remove o arquivo da raiz e verifica se foi bem-sucedido
+
+    // Remove os arquivos relacionados à árvore recursivamente
+    remove(caminhoCompleto);
+    removerArvore(raiz->NomeArquivo);
+
+    closedir(f);
+    // Libera a memória alocada para o nó raiz
+    free(raiz);
+}
+
+
+
 

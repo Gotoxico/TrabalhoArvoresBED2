@@ -16,7 +16,7 @@ int main(){
 
     do{
         printf("=============================================\n");
-        printf("Digite uma opcao: \n1 - Abrir arvore existente\n2 - Criar nova arvore\n3 - Sair\n");
+        printf("Digite uma opcao: \n1 - Abrir arvore existente\n2 - Criar nova arvore\n3 - Remover Arvore\n4 - Sair\n");
         scanf("%d", &opcao1);
         printf("=============================================\n");
         system("cls");
@@ -132,7 +132,7 @@ int main(){
                         case 3:
                             printf("Digite chave: \n");
                             scanf("%d", &chave);
-                            conferidor = buscarArvoreB(chave, raiz->NomeArquivo);
+                            conferidor = buscarArvoreB(chave, raiz);
                             if(conferidor == 1){
                                 printf("\nChave encontrada\n");
                             }
@@ -150,7 +150,15 @@ int main(){
                         default:
                             break;
                     }
+
                 }while(opcao2 != 5);
+                break;
+
+            case 3:
+                listarArvores();
+                printf("\n\nDigite o nome da arvore: ");
+                scanf("%s", nomeArvore);
+                removerArvoreRaiz(nomeArvore);
                 break;
 
 
@@ -158,5 +166,5 @@ int main(){
                 break;
         }
         
-    }while(opcao1 != 3);
+    }while(opcao1 != 4);
 }
