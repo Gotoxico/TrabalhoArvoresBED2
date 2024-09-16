@@ -39,6 +39,8 @@ int main(){
                             printf("Digite chave: \n");
                             scanf("%d", &chave);
                             insercaoCLRS(chave, &raiz);
+                            atualizarNomeArquivoRaiz(raiz, nomeArvore);
+
                             break;
 
                         case 2:
@@ -50,7 +52,7 @@ int main(){
                         case 3:
                             printf("Digite chave: \n");
                             scanf("%d", &chave);
-                            buscarArvoreB(chave, raiz->NomeArquivo);
+                            buscarArvoreB(chave, raiz);
                             break;
 
                         case 4:
@@ -80,6 +82,7 @@ int main(){
                             printf("Digite chave: \n");
                             scanf("%d", &chave);
                             insercaoCLRS(chave, &raiz);
+                            atualizarNomeArquivoRaiz(raiz, nomeArvore);
                             break;
 
                         case 2:

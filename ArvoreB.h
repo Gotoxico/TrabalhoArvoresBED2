@@ -47,6 +47,7 @@ int remocaoNoInterno(int chave, NOARVOREB** raiz);
 int remocaoCaso3(int chave, NOARVOREB** raiz);
 int buscarFilhoRemocao(int chave, NOARVOREB* raiz);
 void remocaoCLRS(int chave, NOARVOREB** raiz);
+void atualizarNomeArquivo(NOARVOREB* raiz, char* nomeArquivo);
 
 #include "ArvoreB.c"
 #endif

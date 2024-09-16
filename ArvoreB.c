@@ -593,6 +593,26 @@ int buscarFilhoRemocao(int chave, NOARVOREB* raiz){
     return i;
 }
 
+//funcao para atualizar o nome do arquivo no diretorio raizes no mesmo nome da arvore passando o NOARVOREB raiz e o nome do arquivo
+void atualizarNomeArquivoRaiz(NOARVOREB* raiz, char* nomeArquivo){
+    DIR *f = opendir("../Diretorios/Raizes");
+    struct dirent* entrada;
+    int arquivos = 0;
+    if(f == NULL){
+        printf("Erro ao abrir diretorio\n");
+        return;
+    }
+   FILE * fb = fopen("../Diretorios/Raizes/nomeArquivo", "wb");
+    if(fb == NULL){
+        perror("Erro ao abrir arquivo");
+        return;
+    }
+    fwrite(raiz->NomeArquivo, sizeof(char), strlen(raiz->NomeArquivo) + 1, fb);
+    fclose(fb);
+
+    closedir(f);
+}
+
 
 // Função para tratar remoção de caso 3 (filho com t-1 chaves)
 int remocaoCaso3(int chave, NOARVOREB** raiz){
