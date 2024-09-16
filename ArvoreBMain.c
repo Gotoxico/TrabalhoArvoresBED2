@@ -29,7 +29,6 @@ int main(){
                 t = aux->t;
                 if(strcpy(nomeArquivo,aux->NomeArquivo) != NULL){
                     strcpy(nomeArquivo, aux->NomeArquivo);
-                    printf("Chegou\n");
                     printf("%s", nomeArvore);
                     raiz = abrirArquivoDiretorio(nomeArquivo);
                 }
