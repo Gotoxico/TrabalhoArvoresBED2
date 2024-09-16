@@ -10,8 +10,8 @@
 int main(){
     srand(time(NULL));
     int opcao1 = 0, opcao2 = 0, chave, t;
-    char* nomeDiretorio = (char*) malloc(256 * sizeof(char));
-    char* nomeArquivo = (char*) malloc(256 * sizeof(char));
+    char* nomeArvore = (char*) malloc(256 * sizeof(char));
+    char* nomeArquivo = (char*) malloc(25 * sizeof(char));
     NOARVOREB* raiz;
 
     do{
@@ -19,23 +19,18 @@ int main(){
         scanf("%d", &opcao1);
         switch(opcao1){
             case 1:
-                listarDiretorioPai();
-                printf("Digite o nome do diretorio: ");
-                scanf("%s", nomeDiretorio);
-                listarDiretorios(nomeDiretorio);
-                if(!VerificarDiretorio(nomeDiretorio)){
-                    printf("Diretorio nao existe\n");
-                    break;
-                }
-                printf("Digite o nome do arquivo: ");
-                scanf("%s", nomeArquivo);
-                if(abrirArquivoDiretorio(nomeArquivo, nomeDiretorio)){
-                    raiz = abrirArquivoDiretorio(nomeArquivo, nomeDiretorio);
+                listarArvores();
+                printf("Digite o nome da arvore: ");
+                scanf("%s", nomeArvore);
+                if(strcpy(nomeArquivo, leituraArquivoRaiz(nomeArvore)) != NULL){
+                    strcpy(nomeArquivo, leituraArquivoRaiz(nomeArvore));
+                    printf("Chegou\n");
+                    printf("%s", nomeArquivo);
+                    raiz = abrirArquivoDiretorio(nomeArquivo);
                 }
                 else{
                     break;
                 }
-                raiz = abrirArquivoDiretorio(nomeArquivo, nomeDiretorio);
                 do{
                     printf("Digite uma opcao para arvore: \n1 - Inserir chave\n2 - Remover chave\n3 - Buscar chave\n4 - Imprimir arvore\n5 - Sair\n");
                     scanf("%d", &opcao2);
@@ -43,23 +38,23 @@ int main(){
                         case 1:
                             printf("Digite chave: \n");
                             scanf("%d", &chave);
-                            insercaoCLRS(chave, &raiz, nomeDiretorio);
+                            insercaoCLRS(chave, &raiz);
                             break;
 
                         case 2:
                             printf("Digite chave: \n");
                             scanf("%d", &chave);
-                            remocaoCLRS(chave, raiz, nomeDiretorio);
+                            remocaoCLRS(chave, &raiz);
                             break;
 
                         case 3:
                             printf("Digite chave: \n");
                             scanf("%d", &chave);
-                            buscarArvoreB(chave, raiz->NomeArquivo, nomeDiretorio);
+                            buscarArvoreB(chave, raiz->NomeArquivo);
                             break;
 
                         case 4:
-                            imprimirArvoreB(raiz, 0, nomeDiretorio);
+                            imprimirArvoreB(raiz, 0);
                             break;
 
                         default:
@@ -67,12 +62,16 @@ int main(){
                             break;
                     }
                 }while(opcao2 != 5);
+                break;
 
             case 2:
-                criarDiretorio();
-                printf("Digite t nova arvore: ");
+                printf("Digite t da nova arvore: ");
                 scanf("%d", &t);
-                NOARVOREB* raiz = criarNoArvoreB(t, 1);
+                raiz = criarNoArvoreB(t, 1);
+                geradorArquivoRaiz(raiz);
+                printf("Digite chave: \n");
+                scanf("%d", &chave);
+                insercaoCLRS(chave, &raiz);
                 break;
 
             default:
