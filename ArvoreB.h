@@ -19,7 +19,6 @@ NOARVOREB* criarNoArvoreB(int t, int folha);
 void criarArquivoDiretorio(NOARVOREB *no, char* nomeArquivo);
 void removerArquivoDiretorio(char *nome);
 NOARVOREB* abrirArquivoDiretorio(char* nomeArquivo);
-void imprimirArvoreB(NOARVOREB* no, int nivel);
 int procurarArquivoDiretorio(char *nome);
 int buscarArvoreB(int chave, NOARVOREB* raiz);
 int buscaBinariaNo(int chave, NOARVOREB* raiz, int limiteInferior, int limiteSuperior);
@@ -40,5 +39,7 @@ void remocaoCLRS(int chave, NOARVOREB** raiz);
 void atualizarNomeArquivoRaiz(NOARVOREB* raiz, char* nomeArquivo);
 void removerArvoreRaiz(char* nome);
 void removerArvore(char* nome);
+int diretorioVazio();
+int buscarArquivo(char* nome);
 #include "ArvoreB.c"
 #endif

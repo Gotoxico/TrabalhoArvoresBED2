@@ -16,7 +16,7 @@ int main(){
 
     do{
         printf("=============================================\n");
-        printf("Digite uma opcao: \n1 - Abrir arvore existente\n2 - Criar nova arvore\n3 - Remover Arvore\n4 - Sair\n");
+        printf("Digite uma opcao: \n1 - Abrir arvore existente\n2 - Criar nova arvore\n3 - Remover Arvore\n4 - Remover conteudo de todas as arvore\n5 - Sair\n");
         scanf("%d", &opcao1);
         printf("=============================================\n");
         system("cls");
@@ -29,7 +29,6 @@ int main(){
                 t = aux->t;
                 if(strcpy(nomeArquivo,aux->NomeArquivo) != NULL){
                     strcpy(nomeArquivo, aux->NomeArquivo);
-                    printf("%s", nomeArvore);
                     raiz = abrirArquivoDiretorio(nomeArquivo);
                 }
                 else{
@@ -49,6 +48,12 @@ int main(){
                             if(conferidor == 1){
                                 printf("\nChave ja existe\n");
                                 break;
+                            }
+                            if(diretorioVazio() || !buscarArquivo(aux->NomeArquivo)){
+                                printf("AQUII");
+                                criarArquivoDiretorio(raiz, aux->NomeArquivo);
+                            }else{
+                                insercaoCLRS(chave, &raiz);
                             }
                             insercaoCLRS(chave, &raiz);
                             printf("%s", nomeArvore);
@@ -159,6 +164,12 @@ int main(){
                 printf("\n\nDigite o nome da arvore: ");
                 scanf("%s", nomeArvore);
                 removerArvoreRaiz(nomeArvore);
+                //Remover arquivo Arvore
+                system("pause");
+                break;
+
+            case 4:
+                removerArquivosDiretorio();
                 break;
 
 

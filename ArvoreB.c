@@ -370,9 +370,54 @@ void insercaoCLRS(int chave, NOARVOREB ** raiz) {
     } 
 }
 
+//Funcao para verificar se ja existe um arquivo com o nome passado
+int buscarArquivo(char* nome){
+    DIR *f = opendir("../Diretorios/Raizes");
+    struct dirent* entrada;
+    int arquivos = 0;
+    if(f == NULL){
+        printf("Erro ao abrir diretorio\n");
+        return 0;
+    }
+
+    else{
+        while ((entrada = readdir(f)) != NULL) {
+            arquivos++;
+            if(strcmp(entrada->d_name, nome) == 0){
+                closedir(f);
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+//Funcao para verificar se o diretorio Arvore esta vazio, retorna um inteiro
+int diretorioVazio(){
+    DIR *f = opendir("../Diretorios/Arvore");
+    struct dirent* entrada;
+    int arquivos = 0;
+    if(f == NULL){
+        printf("Erro ao abrir diretorio\n");
+        return 0;
+    }
+
+    else{
+        while ((entrada = readdir(f)) != NULL) {
+            arquivos++;
+            if(strcmp(entrada->d_name, ".") != 0 && strcmp(entrada->d_name, "..") != 0){
+                closedir(f);
+                return 0;
+            }
+        }
+    }
+    closedir(f);
+    return 1;
+}
+
 //funcao para remover todos os arquivos de um diretorio
 void removerArquivosDiretorio(){
-    DIR *f = opendir("../Diretorios");
+    DIR *f = opendir("../Diretorios/Arvore");
     struct dirent* entrada;
     int arquivos = 0;
     if(f == NULL){
@@ -385,7 +430,7 @@ void removerArquivosDiretorio(){
             arquivos++;
             if(strcmp(entrada->d_name, ".") != 0 && strcmp(entrada->d_name, "..") != 0){
                 char caminhoCompleto[250];
-                snprintf(caminhoCompleto, sizeof(caminhoCompleto), "../Diretorios/%s", entrada->d_name);
+                snprintf(caminhoCompleto, sizeof(caminhoCompleto), "../Diretorios/Arvore%s", entrada->d_name);
                 remove(caminhoCompleto);
             }
         }
@@ -437,7 +482,7 @@ char* geradorArquivoRaiz(NOARVOREB* raiz) {
         }
 
     // Gerar o nome do novo arquivo da árvore
-    snprintf(nomeArvore, 256, "Arvore%d.dat", arquivos + 1);
+    snprintf(nomeArvore, 256, "Arvore%d.dat", (arquivos + 1));
 
     // Gerar o caminho completo do novo arquivo
     char caminho[256];
@@ -457,9 +502,9 @@ char* geradorArquivoRaiz(NOARVOREB* raiz) {
         perror("Erro ao escrever no arquivo");
         fclose(file);
         free(nomeArvore);
-        closedir(f);
         return NULL;
     }
+    fwrite(&raiz->t, sizeof(int), 1, file);
 
     // Fechar o arquivo e o diretório
     fclose(file);
@@ -482,7 +527,6 @@ NOARVOREB * leituraArquivoRaiz(char* nome){
     else{
         char* caminhoCompleto = (char*) malloc(256 * sizeof(char));
         snprintf(caminhoCompleto, 256, "../Diretorios/Raizes/%s", nome);
-        int t;
         while((entrada = readdir(f)) != NULL){
             arquivos++;
             if(strcmp(entrada->d_name, nome) == 0){
@@ -806,7 +850,7 @@ void remocaoCLRS(int chave, NOARVOREB** raiz){
     }
 }void removerArvore(char* nome) {
     NOARVOREB* raiz = abrirArquivoDiretorio(nome);
-    FILE * f = opendir("../Diretorios/Arvore");
+    DIR * f = opendir("../Diretorios/Arvore");
 
     if (raiz == NULL) {
         printf("Erro ao abrir arquivo da árvore: %s\n", nome);
@@ -838,10 +882,9 @@ void remocaoCLRS(int chave, NOARVOREB** raiz){
 
 
 
+//Função para remover a árvore raiz
 void removerArvoreRaiz(char* nome) {
     NOARVOREB* raiz = leituraArquivoRaiz(nome);
-    FILE * f = opendir("../Diretorios/Raizes");
-    
     if (raiz == NULL) {
         printf("Erro ao abrir arquivo de raiz: %s\n", nome);
         return;
@@ -849,17 +892,23 @@ void removerArvoreRaiz(char* nome) {
 
     printf("\nREMOCAO ARVORE RAIZ: %s\n", nome);
 
-    // Monta o caminho completo do arquivo raiz a ser removido
-    char * caminhoCompleto = (char*) malloc(256 * sizeof(char));
-    snprintf(caminhoCompleto, 256, "../Diretorios/Raizes/%s", nome);
+    // Remover todos os nós da árvore
+    removerArvore(raiz->NomeArquivo);
+
+    // Monta o caminho completo do arquivo a ser removido
+    char caminhoCompleto[256];
+    snprintf(caminhoCompleto, sizeof(caminhoCompleto), "../Diretorios/Raizes/%s", nome);
 
     // Remove o arquivo da raiz e verifica se foi bem-sucedido
 
-    // Remove os arquivos relacionados à árvore recursivamente
-    remove(caminhoCompleto);
-    removerArvore(raiz->NomeArquivo);
+    if (remove(caminhoCompleto) == 0) {
+        printf("Arquivo de raiz %s removido com sucesso.\n", caminhoCompleto);
+    } else {
+        printf("Erro ao remover o arquivo de raiz %s.\n", caminhoCompleto);
+    }
+    //Atualizar o arquivo de raizes
+    removerArquivosDiretorio();
 
-    closedir(f);
     // Libera a memória alocada para o nó raiz
     free(raiz);
 }
